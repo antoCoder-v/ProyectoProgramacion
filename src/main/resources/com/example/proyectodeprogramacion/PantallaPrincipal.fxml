@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="pantallaPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodeprogramacion.ControladorPantallaPrincipal">
+    <children>
+        <Button fx:id="botonAgregaBateria" layoutX="14.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Bateria">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Button>
+        <Button fx:id="mostrarSwitch" layoutX="128.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Switch">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Button>
+        <Button fx:id="mostrarLed" layoutX="238.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Led">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Button>
+        <Button fx:id="agregarProtoboard" layoutX="331.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Protoboard">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Button>
+      <Button fx:id="verCircuito" layoutX="469.0" layoutY="31.0" mnemonicParsing="false" text="Verificar Circuito">
+         <font>
+            <Font name="Comic Sans MS" size="12.0" />
+         </font>
+      </Button>
+    </children>
+</AnchorPane>
