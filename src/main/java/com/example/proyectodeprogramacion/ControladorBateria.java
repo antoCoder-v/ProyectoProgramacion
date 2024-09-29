@@ -2,8 +2,6 @@ package com.example.proyectodeprogramacion;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -33,6 +31,8 @@ public class ControladorBateria {
         VariablesGlobales.botonPresionadoBateria = botonCargaNegativa;
 
         botonCargaNegativa.setStyle("-fx-background-color: red;");
+        //botonCargaNegativa.setId("Button -bateria-x-x-negativa");
+        System.out.println("Boton presionado"+ botonCargaNegativa.getId());
     }
 
     @FXML
@@ -41,6 +41,8 @@ public class ControladorBateria {
         VariablesGlobales.botonPresionadoBateria = botonCargaPositiva;
 
         botonCargaPositiva.setStyle("-fx-background-color: green;");
+        //botonCargaPositiva.setId("Button -bateria-x-x-positiva");
+        System.out.println("Boton presionado "+ botonCargaNegativa.getId());
     }
 
     private void handleMousePressed(MouseEvent event) {

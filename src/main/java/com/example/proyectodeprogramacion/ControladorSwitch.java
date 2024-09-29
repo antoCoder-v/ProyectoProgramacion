@@ -5,15 +5,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Bounds;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ControladorSwitch {
 
@@ -27,7 +25,7 @@ public class ControladorSwitch {
     private Rectangle rectangle; // Rectángulo dentro del switchPane
 
     @FXML
-    private Circle circleCenter,circle1,circle2,circle3,circle4; // Círculo dentro del switchPane
+    private Circle circleCenter,circle1,circle2,circle3,circle4; // Círculo dentro del switchPane (derecha, derecha, izquierda, izquierda)
 
     @FXML
     private Button encender;
@@ -35,6 +33,8 @@ public class ControladorSwitch {
     private double offsetX,offsetY;
     private ControladorProtoboard protoboard;
     private boolean pasoCorrienteSwitch = false;
+    private String corriente = "0";
+    private String tipoGridPane = "";
 
 
     public ControladorSwitch() {
@@ -45,28 +45,22 @@ public class ControladorSwitch {
         EliminarElementos.habilitarEliminacion(switchPane);
         protoboard = VariablesGlobales.controladorProtoboard;
         //VariablesGlobales.controladorSwitch = this;
+
         // Configura los eventos de arrastre para el switchPane
         switchPane.setOnMousePressed(this::handleMousePressed);
+
+        //sl momento de dejar el switch verifica si recibe corriente
         switchPane.setOnMouseDragged(this::handleMouseDragged);
 
-        // Configura los eventos de arrastre para cada círculo (opcional si se necesita mover individualmente)
-        circle1.setOnMousePressed(this::handleMousePressed);
-        circle1.setOnMouseDragged(this::handleMouseDragged);
+        // Configura el evento al presionar el botón "Encender", al presionar se activa el paso de corriente
+        encender.setOnAction(event -> {
+            manejamosPasoCorriente();
+        });
 
-        circle2.setOnMousePressed(this::handleMousePressed);
-        circle2.setOnMouseDragged(this::handleMouseDragged);
-
-        circle3.setOnMousePressed(this::handleMousePressed);
-        circle3.setOnMouseDragged(this::handleMouseDragged);
-
-        circle4.setOnMousePressed(this::handleMousePressed);
-        circle4.setOnMouseDragged(this::handleMouseDragged);
-
-        circleCenter.setOnMousePressed(this::handleMousePressed);
-        circleCenter.setOnMouseDragged(this::handleMouseDragged);
-
-        // Configura el evento al presionar el botón "Encender"
-        encender.setOnAction(event -> verificarPosicion(protoboard));
+        //manjamos el paso de corriente
+        if(pasoCorrienteSwitch){
+            
+        }
     }
 
     private void handleMousePressed(MouseEvent event) {
@@ -77,88 +71,129 @@ public class ControladorSwitch {
     private void handleMouseDragged(MouseEvent event) {
         switchPane.setLayoutX(event.getSceneX() - offsetX);
         switchPane.setLayoutY(event.getSceneY() - offsetY);
+
+         //verifica que el lado izquierdo del switch este conectado a los botones y recibiendo corriente
+         verificarPosicion(protoboard);
     }
 
-    // Método para verificar si el switch está correctamente colocado sobre 4 botones
+    // Método para verificar si el switch esta recibiendo corriente en algunos de sus botones izquierdos
     public void verificarPosicion(ControladorProtoboard protoboard) {
-        pasoCorrienteSwitch = false;
-        VariablesGlobales.corrienteSwitch = pasoCorrienteSwitch;
-        System.out.println("Valor de pasoCorrienteSwitch: " + pasoCorrienteSwitch); // Verificar cambio
+        pasoCorrienteSwitch = false; 
+
         if (protoboard == null) {
             System.out.println("Protoboard no está asignado.");
             return;
         }
 
-        double switchX = switchPane.getLayoutX();
-        double switchY = switchPane.getLayoutY();
+        //El lado izquierdo recibe la corriente
+        //circle3
+        verificarEnGridPane(protoboard.getBusSuperior(), circle3, "busSuperior");
+        verificarEnGridPane(protoboard.getPistaSuperior(), circle3, "pistaSuperior");
+        verificarEnGridPane(protoboard.getBusInferior(), circle3, "busInferior");
+        verificarEnGridPane(protoboard.getPistaInferior(), circle3, "pistaInferior");
 
-        // Lista para almacenar los botones debajo del switch
-        List<Button> botonesDebajoSwitch = new ArrayList<>();
+        //circle4
+        verificarEnGridPane(protoboard.getBusSuperior(), circle4, "busSuperior");
+        verificarEnGridPane(protoboard.getPistaSuperior(), circle4, "pistaSuperior");
+        verificarEnGridPane(protoboard.getBusInferior(), circle4, "busInferior");
+        verificarEnGridPane(protoboard.getPistaInferior(), circle4, "pistaInferior");
 
-        verificarEnGridPane(protoboard.getBusSuperior(), switchX, switchY, botonesDebajoSwitch);
-        verificarEnGridPane(protoboard.getPistaSuperior(), switchX, switchY, botonesDebajoSwitch);
-        verificarEnGridPane(protoboard.getBusInferior(), switchX, switchY, botonesDebajoSwitch);
-        verificarEnGridPane(protoboard.getPistaInferior(), switchX, switchY, botonesDebajoSwitch);
-
-        if (botonesDebajoSwitch.size() == 4) {
-            mostrarVentanaMensaje("El SWITCH fue conectado correctamente","Conexiòn");
-            //System.out.println("Switch correctamente colocado sobre 4 botones.");
-            verificarCorriente(botonesDebajoSwitch); // Verificar corriente automáticamente
-            //System.out.println("Valor de pasoCorrienteSwitch en verificarPosicion: " + pasoCorrienteSwitch); // Verificar cambio
-        } else {
-            mostrarError("El switch debe estar sobre 4 botones.");
-        }
     }
 
-    // Método auxiliar para iterar sobre los botones de un GridPane
-    private void verificarEnGridPane(GridPane gridPane, double switchX, double switchY, List<Button> botonesDebajoSwitch) {
+    // Metodo que verifica si el circulo esta en protoboard y si recibe corriente
+    private void verificarEnGridPane(GridPane gridPane, Circle circle, String tipo) {
         for (Node node : gridPane.getChildren()) {
             if (node instanceof Button) {
                 Button button = (Button) node;
 
-                // Obtener los límites en escena de ambos elementos para una comparación precisa
-                Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
-                Bounds switchBounds = switchPane.localToScene(switchPane.getBoundsInLocal());
+                //variables para guardarpartes de la id
+                String buttonId = button.getId();
+                String carga = "";                          //obtenemos carga del boton
+                String[] parts = buttonId.split("-"); //se separa en partes la id
+                carga = parts[4].trim();                    //obtenemos solo carga del boton
 
-                // Verifica si los límites del switch intersectan con los límites del botón
-                if (switchBounds.intersects(buttonBounds)) {
-                    System.out.println("Switch sobre: " + button.getId());
-                    botonesDebajoSwitch.add(button); // Agregar botón a la lista
+                // Obtener los límites en escena de ambos elementos para una comparación precisa
+                Bounds circleBounds = circle.localToScene(circle.getBoundsInLocal());
+                Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
+
+                // Verifica que algun circulo intersecte con los límites del botón
+                if (circleBounds.intersects(buttonBounds)) {
+                    //mostrarVentanaMensaje("Circulo conectado", "Conexiòn");
+                    if(carga.equals("positiva")){ //si la carga es positiva
+                        circle.setFill(Color.GREEN);
+                        corriente = "positiva";
+                        tipoGridPane = tipo;
+                    }else if(carga.equals("negativa")){ //si la carga es negativa
+                        circle.setFill(Color.RED);
+                        corriente = "negativa";
+                        tipoGridPane = tipo;
+                    }else if(carga.equals("0")){
+                        circle.setFill(Color.BLACK);
+                        corriente = "0";
+                    }
                 }
             }
         }
-        System.out.println("----------------------------------");
     }
 
-    // Método para verificar si los botones reciben corriente
-    private void verificarCorriente(List<Button> botonesDebajoSwitch) {
-        boolean tieneCorrientePositiva = false;
-        boolean tieneCorrienteNegativa = false;
+    private void manejamosPasoCorriente(){
+        //obtenemos algun boton de la protoboard del lado derecho del switch
+        Bounds circleBounds = circle1.localToScene(circle1.getBoundsInLocal());
+        int row= 0, col=0; 
 
-        for (Button boton : botonesDebajoSwitch) {
-            if (boton.getStyle().contains("green")) {
-                tieneCorrientePositiva = true;
-            } else if (boton.getStyle().contains("red")) {
-                tieneCorrienteNegativa = true;
+
+        //pasamos la corriente al otro lado del switch
+
+        if (tipoGridPane.contains("busSuperior") || tipoGridPane.contains("busInferior")) {
+            GridPane gridPane = tipoGridPane.contains("busSuperior") ? protoboard.getBusSuperior() : protoboard.getBusInferior();
+
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeRow = GridPane.getRowIndex(node);
+                Button button = (Button) node;
+                Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
+
+                if(circleBounds.intersects(buttonBounds)){
+                    //variables para guardarpartes de la id
+                    String buttonId = button.getId();                                
+                    String[] parts = buttonId.split("-"); //se separa en partes la id
+                    row = Integer.parseInt(parts[2].trim());       //obtenemos solo carga del boton
+                    
+
+                }
+
+                if (nodeRow != null && nodeRow.equals(row)) {
+                    if (corriente.equals("positiva")) {
+                        node.setStyle("-fx-background-color: green;");
+                    } else if (corriente.equals("negativa")) {
+                        node.setStyle("-fx-background-color: red;");
+                    } 
+                }
+            }
+        } else{
+            GridPane gridPane = tipoGridPane.contains("pistaSuperior") ? protoboard.getPistaSuperior() : protoboard.getPistaInferior();
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeCol = GridPane.getColumnIndex(node);
+                Button button = (Button) node;
+                Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
+
+                if(circleBounds.intersects(buttonBounds)){
+                    //variables para guardarpartes de la id
+                    String buttonId = button.getId();                                
+                    String[] parts = buttonId.split("-"); //se separa en partes la id
+                    col = Integer.parseInt(parts[3].trim());       //obtenemos solo carga del boton
+                }
+
+                if (nodeCol != null && nodeCol.equals(col)) {
+                    if (corriente.equals("positiva")) {
+                        node.setStyle("-fx-background-color: green;");
+                    } else if (corriente.equals("negativa")) {
+                        node.setStyle("-fx-background-color: red;");
+                    }
+                }
             }
         }
+    }
 
-        if (tieneCorrientePositiva && tieneCorrienteNegativa) {
-            System.out.println("El switch está recibiendo corriente correctamente.");
-            pasoCorrienteSwitch = true;
-            VariablesGlobales.corrienteSwitch = pasoCorrienteSwitch;
-        } else {
-            mostrarError("El switch no está recibiendo corriente correctamente.");
-        }
-    }
-    // Método para mostrar un mensaje de error
-    private void mostrarError(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
     private void mostrarVentanaMensaje(String message, String title) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
