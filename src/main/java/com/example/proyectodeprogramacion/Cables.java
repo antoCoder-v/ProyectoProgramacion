@@ -9,33 +9,36 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Point2D;
-import javafx.scene.input.MouseButton;
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cables {
-    private Button buttonStart,buttonEnd;
+    private Button buttonStart, buttonEnd;
     private AnchorPane pane;
-    private GridPane busSuperior,busInferior,pistaSuperior,pistaInferior;
-    private String estilo;   //Manejamos la carga que tienen alguno de los botones
-    private Line cableSeleccionado = null; // Cable actualmente seleccionado
-   // private Line cable;
+    private GridPane busSuperior, busInferior, pistaSuperior, pistaInferior;
+    private String estilo, carga;   // Manejamos la carga que tienen alguno de los botones
+    private List<CableInfo> cablesConectados; // Lista para almacenar los cables conectados
 
-    public Cables() {
+    // Clase interna para almacenar la información de los cables
+    private class CableInfo {
+        Button startButton;
+        Button endButton;
+        Line cable;
 
-
+        CableInfo(Button startButton, Button endButton, Line cable) {
+            this.startButton = startButton;
+            this.endButton = endButton;
+            this.cable = cable;
+        }
     }
 
     public Cables(GridPane busSuperior, GridPane pistaSuperior, GridPane busInferior, GridPane pistaInferior) {
-        pane = VariablesGlobales.pantallaPrincipal;
-        //EliminarElementos.habilitarEliminacion(cable);
-        //recibimos los grindpane para el manejo correcto de las corrientes
-        if (busSuperior == null || pistaSuperior == null || busInferior == null || pistaInferior == null) {
-            System.out.println("Alguno de los GridPane recibidos es nulo.");
-        }
+        cablesConectados = new ArrayList<>();
         this.busSuperior = busSuperior;
-        this.busInferior = busInferior;
         this.pistaSuperior = pistaSuperior;
+        this.busInferior = busInferior;
         this.pistaInferior = pistaInferior;
+        this.pane = VariablesGlobales.pantallaPrincipal; // Suponiendo que el pane se obtiene de las variables globales
     }
 
     // Método para establecer el primer botón
@@ -43,36 +46,56 @@ public class Cables {
         this.buttonStart = button;
     }
 
+    // Método para obtener el primer botón (soluciona el error)
+    public Button getButtonStart() {
+        return buttonStart;
+    }
+
+    public void actualizarGridpanes(){
+        busInferior.layout();
+        busSuperior.layout();
+        pistaInferior.layout();
+        pistaSuperior.layout();
+    }
+
+    //| Método para establecer el segundo botón y dibujar el cable
     public void setButtonEndAndDrawCable(Button button) {
         this.buttonEnd = button;
 
         if (buttonStart != null && buttonEnd != null) {
-            if(buttonStart == buttonEnd){
+            if (buttonStart == buttonEnd) {
                 mostrarVentanaMensaje("No puedes conectar un botón consigo mismo.");
-            }else{
-                drawCable();
+            } else {
+                //Verifica si ya existe un cable entre los dos botones
+                CableInfo cableExistente = encontrarCable(buttonStart, buttonEnd);
+                if (cableExistente != null) {
+                    // Si existe un cable, lo eliminamos
+                    eliminarCable(cableExistente);
+                } else {
+                    // Si no existe un cable, dibujamos uno nuevo
+                    drawCable();
 
-                // Reconocer la carga de los botones de inicio y fin
-                reconoceCarga(buttonStart, buttonEnd);
+                    //indicar en la id si el boton esta conectado a un cable
+                    cambiarParteIdBoton(buttonStart, 5, "conectado"); 
+                    cambiarParteIdBoton(buttonEnd, 5, "conectado");
 
-                // Llamar al método manejoCorriente para propagar el color a otros botones en la fila/columna
-                manejoCorriente(buttonStart);
-                manejoCorriente(buttonEnd);
+                    // Reconocer la carga de los botones de inicio y fin
+                    reconoceCarga(buttonStart, buttonEnd);
+
+                    // Llamar al método manejoCorriente para propagar el color a otros botones en la fila/columna
+                    manejoCorriente(buttonStart);
+                    manejoCorriente(buttonEnd);
+
+                    actualizarGridpanes();
+                }
 
                 // Reiniciar las variables temporales para otro uso
                 buttonStart = null;
                 buttonEnd = null;
                 estilo = "";
+                carga = "";
             }
         }
-    }
-
-    public Button getButtonStart() {
-        return buttonStart;
-    }
-
-    public Button getButtonEnd() {
-        return buttonEnd;
     }
 
     // Método para dibujar el cable
@@ -88,38 +111,127 @@ public class Cables {
         // Crear la línea que representa el cable
         Line cable = new Line(startPaneCoords.getX(), startPaneCoords.getY(), endPaneCoords.getX(), endPaneCoords.getY());
         cable.setStrokeWidth(3);
+        cable.setStroke(Color.BLACK);
 
         // Agregar el cable al pane
         pane.getChildren().add(cable);
+
+        // Agregar el cable y los botones a la lista de cables conectados
+        cablesConectados.add(new CableInfo(buttonStart, buttonEnd, cable));
     }
 
-    // Método para habilitar la edición del cable
-    private void enableCableEdit(Line cable) {
-        // Evento para seleccionar el cable al hacer clic izquierdo
-        cable.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                // Resaltar el cable cuando esté seleccionado
-                cable.setStroke(Color.BLUE);
-                cableSeleccionado = cable;
-            }
-            // Evento para eliminar el cable al hacer clic derecho
-            if (event.getButton() == MouseButton.SECONDARY) {
-                pane.getChildren().remove(cable);
-            }
-        });
+    // Método para eliminar un cable
+    private void eliminarCable(CableInfo cableInfo) {
+        pane.getChildren().remove(cableInfo.cable);
+        cablesConectados.remove(cableInfo);
+    }
 
-        // Evento para arrastrar el cable y moverlo
-        cable.setOnMouseDragged(event -> {
-            if (cableSeleccionado != null) {
-                // Obtener las nuevas coordenadas y actualizar la posición del cable
-                double newX = event.getX();
-                double newY = event.getY();
-
-                // Actualizar solo el punto final para simular el arrastre
-                cableSeleccionado.setEndX(newX);
-                cableSeleccionado.setEndY(newY);
+    // Método para encontrar un cable entre dos botones
+    private CableInfo encontrarCable(Button startButton, Button endButton) {
+        for (CableInfo cableInfo : cablesConectados) {
+            if ((cableInfo.startButton == startButton && cableInfo.endButton == endButton) ||
+                    (cableInfo.startButton == endButton && cableInfo.endButton == startButton)) {
+                return cableInfo;
             }
-        });
+        }
+        return null;
+    }
+
+    // Método para manejar la corriente
+    private void manejoCorriente(Button boton) {
+        if (boton.getId().equals("botonCargaNegativa") || boton.getId().equals("botonCargaPositiva")) {
+            return; // Sale de la función
+        }
+        cambiarParteIdBoton(boton, 4, carga);
+
+        //String buttonId = boton.getId();
+        String tipo = retornaUnValorDeID(boton, 1);
+        int row = Integer.parseInt(retornaUnValorDeID(boton, 2));
+        int col = Integer.parseInt(retornaUnValorDeID(boton, 3));
+        String carga = retornaUnValorDeID(boton, 4);
+
+
+        // Propagar el color solo en la fila o columna correspondiente
+        if (tipo.contains("busSuperior") || tipo.contains("busInferior")) {
+            GridPane gridPane = tipo.contains("busSuperior") ? busSuperior : busInferior;
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeRow = GridPane.getRowIndex(node);
+                if (nodeRow != null && nodeRow.equals(row)) {
+                    node.setStyle(estilo);
+                    if (carga.equals("positiva")) {
+                        cambiarParteIdBoton((Button) node, 4, carga);
+                    } else if (carga.equals("negativa")) {
+                        cambiarParteIdBoton((Button) node, 4, carga);
+                    }
+                }
+            }
+        } else{
+            GridPane gridPane = tipo.contains("pistaSuperior") ? pistaSuperior : pistaInferior;
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeCol = GridPane.getColumnIndex(node);
+                if (nodeCol != null && nodeCol.equals(col)) {
+                    node.setStyle(estilo);
+                    if (carga.equals("positiva")) {
+                        cambiarParteIdBoton((Button) node, 4, carga);
+                    } else if (carga.equals("negativa")) {
+                        cambiarParteIdBoton((Button) node, 4, carga);
+                    }
+                }
+            }
+        }
+    }
+
+    // Método para reconocer la carga (color) de los botones
+    private void reconoceCarga(Button boton1, Button boton2) {
+        String carga1 = retornaUnValorDeID(boton1, 4);
+        String carga2 = retornaUnValorDeID(boton2, 4);
+
+        if(carga1.contains("positiva") && carga2.contains("negativa") || carga1.contains("negativa") && carga2.contains("positiva")){
+            mostrarVentanaMensaje("No se puede conectar distintas cargas de energías");
+        } else if (carga1.contains("positiva") || carga2.contains("positiva")) {
+            estilo = "-fx-background-color: green; -fx-background-radius: 30;";
+            carga = "positiva";
+        } else if (carga1.contains("negativa") || carga2.contains("negativa")) {
+            estilo = "-fx-background-color: red; -fx-background-radius: 30;";
+            carga = "negativa";
+        } else {
+            estilo = "-fx-background-radius: 30;";
+            carga = "0";
+        }
+    }
+
+    //Funcion que cambia una parte del id segun el index que se le pase
+    public void cambiarParteIdBoton(Button button, int index, String nuevoValor) {
+        try {
+            String buttonId = button.getId();
+            if(buttonId.equals("botonCargaNegativa") || buttonId.equals("botonCargaPositiva")){
+                return; //sale de la funcion
+            }
+            // Dividir el ID del botón en partes
+            String[] parts = buttonId.split("-");
+        
+            // Modificar la parte deseada
+            parts[index] = nuevoValor;
+            
+            // Unir las partes de nuevo en un solo ID y cambiarlo
+            String nuevoId = String.join("-", parts);
+            button.setId(nuevoId);
+        } catch (Exception e) {
+            System.err.println("Error en cambiarParteIdBoton: " + e.getMessage());
+            e.printStackTrace();
+            return; // Retornar el ID original en caso de error
+        }
+    }
+
+    private String retornaUnValorDeID(Button button, int index){
+        if(button.getId().equals("botonCargaNegativa")){
+            return "negativa";
+        }else if(button.getId().equals("botonCargaPositiva")){
+            return "positiva";
+        }
+        String buttonId = button.getId();
+        String[] parts = buttonId.split("-");
+        return parts[index];
     }
 
     // Método para mostrar una ventana de mensaje
@@ -130,57 +242,5 @@ public class Cables {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-    // Método para manejar la corriente
-    private void manejoCorriente(Button boton) {
-        String buttonId = boton.getId();
-        String tipo = "";
-        int row = -1;
-        int col = -1;
-
-        //sepamos los datos que estan en el ID
-        if (buttonId != null && buttonId.startsWith("Button -")) {
-            String[] parts = buttonId.split("-");
-            if (parts.length == 4) {
-                tipo = parts[1].trim();
-                row = Integer.parseInt(parts[2].trim());
-                col = Integer.parseInt(parts[3].trim());
-            } else {
-                System.out.println("ID del botón no tiene el formato esperado.");
-            }
-        }
-
-        // Propagar el color solo en la fila o columna correspondiente
-        if (tipo.contains("busSuperior") || tipo.contains("busInferior")) {
-            GridPane gridPane = tipo.contains("busSuperior") ? busSuperior : busInferior;
-            for (Node node : gridPane.getChildren()) {
-                Integer nodeRow = GridPane.getRowIndex(node);
-                if (nodeRow != null && nodeRow.equals(row)) {
-                    node.setStyle(estilo);
-                }
-            }
-        } else if (tipo.contains("pistaSuperior") || tipo.contains("pistaInferior")) {
-            GridPane gridPane = tipo.contains("pistaSuperior") ? pistaSuperior : pistaInferior;
-            for (Node node : gridPane.getChildren()) {
-                Integer nodeCol = GridPane.getColumnIndex(node);
-                if (nodeCol != null && nodeCol.equals(col)) {
-                    node.setStyle(estilo);
-                }
-            }
-        }
-    }
-
-    private void reconoceCarga(Button boton1, Button boton2){
-        String style1 = boton1.getStyle();
-        String style2 = boton2.getStyle();
-        if(style1.contains("green") && style2.contains("red") || style1.contains("red") && style2.contains("green")){
-            mostrarVentanaMensaje("No se puede conectar distintas cargas de energias");
-        }else if(style1.contains("green") || style2.contains("green")){
-            estilo = "-fx-background-color: green; -fx-background-radius: 30;";
-        }else if(style1.contains("red") || style2.contains("red")){
-            estilo = "-fx-background-color: red; -fx-background-radius: 30;";
-        }else{
-            estilo = "-fx-background-radius: 30;";
-        }
-    }
+    
 }

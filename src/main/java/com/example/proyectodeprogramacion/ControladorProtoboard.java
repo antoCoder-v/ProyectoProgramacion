@@ -14,10 +14,13 @@ public class ControladorProtoboard {
 
     @FXML
     private GridPane busSuperior,pistaSuperior,busInferior,pistaInferior;
+
     @FXML
     private Pane mainPane;
+
     @FXML
     private AnchorPane PantallaProtoboard;
+
     //Clases externas
     private Cables cableManager;
     private ControladorSwitch elementoSwitch;
@@ -70,6 +73,7 @@ public class ControladorProtoboard {
 
     // Método que recorre un GridPane y añade botones en cada celda
     private void agregarBotonesGridPane(GridPane gridPane, String tipo) {
+
         int rows = gridPane.getRowConstraints().size();
         int columns = gridPane.getColumnConstraints().size();
 
@@ -82,13 +86,15 @@ public class ControladorProtoboard {
                 button.setStyle("-fx-background-radius: 30;");
 
                 // Asignar un ID basado en la posición
-                button.setId("Button -"+ tipo+ "-"+ row + "-" + col);
+                //button + tipo + row + col + carga + cableConectado
+                button.setId("Button -"+ tipo+ "-"+ row + "-" + col + "-0-desconectado"); //carga "0 y no" por defecto
 
                 //manejamos el clic a la protoboard
                 button.setOnAction(event -> {
                     onButtonClicked(button, tipo);
                 });
 
+                // Agregar botón a la celda
                 gridPane.add(button, col, row);
             }
         }
@@ -120,8 +126,8 @@ public class ControladorProtoboard {
         } else {
             // Si ya hay un botón de inicio, configúralo como final y dibuja el cable
             cableManager.setButtonEndAndDrawCable(button);
+            
         }
-        //verificarCircuitoCerrado();
     }
 
     private void handleMousePressed(MouseEvent event) {
