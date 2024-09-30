@@ -93,6 +93,9 @@ public class ControladorProtoboard {
                 button.setOnAction(event -> {
                     onButtonClicked(button, tipo);
                 });
+
+                // Agregar botón a la celda
+                gridPane.add(button, col, row);
             }
         }
     }

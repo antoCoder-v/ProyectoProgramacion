@@ -1,7 +1,6 @@
 package com.example.proyectodeprogramacion;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -35,6 +34,7 @@ public class ControladorSwitch {
     private boolean pasoCorrienteSwitch = false;
     private String corriente = "0";
     private String tipoGridPane = "";
+    private Button botonDerecho;
 
 
     public ControladorSwitch() {
@@ -56,11 +56,6 @@ public class ControladorSwitch {
         encender.setOnAction(event -> {
             manejamosPasoCorriente();
         });
-
-        //manjamos el paso de corriente
-        if(pasoCorrienteSwitch){
-            
-        }
     }
 
     private void handleMousePressed(MouseEvent event) {
@@ -114,6 +109,7 @@ public class ControladorSwitch {
 
                 // Obtener los límites en escena de ambos elementos para una comparación precisa
                 Bounds circleBounds = circle.localToScene(circle.getBoundsInLocal());
+                Bounds circle1Bounds = circle1.localToScene(circle1.getBoundsInLocal());
                 Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
 
                 // Verifica que algun circulo intersecte con los límites del botón
@@ -132,74 +128,77 @@ public class ControladorSwitch {
                         corriente = "0";
                     }
                 }
+
+                //obtenemos algun boton de la parte derecha del switch
+                if (circle1Bounds.intersects(buttonBounds)) {
+                    botonDerecho = button;
+                }
             }
         }
     }
 
+    //manejamos el traspaso de corriente al lado derecho de swicth
     private void manejamosPasoCorriente(){
-        //obtenemos algun boton de la protoboard del lado derecho del switch
-        Bounds circleBounds = circle1.localToScene(circle1.getBoundsInLocal());
-        int row= 0, col=0; 
 
+        int col = Integer.parseInt(retornaUnValorDeID(botonDerecho, 3));
 
-        //pasamos la corriente al otro lado del switch
+        //pasamos la corriente al otro lado del switch, solo el switch funciona en las pistas
+        GridPane gridPane = tipoGridPane.contains("pistaSuperior") ? protoboard.getPistaSuperior() : protoboard.getPistaInferior();
+        for (Node node : gridPane.getChildren()) {
+            Integer nodeCol = GridPane.getColumnIndex(node);
+            Button button = (Button) node;
 
-        if (tipoGridPane.contains("busSuperior") || tipoGridPane.contains("busInferior")) {
-            GridPane gridPane = tipoGridPane.contains("busSuperior") ? protoboard.getBusSuperior() : protoboard.getBusInferior();
-
-            for (Node node : gridPane.getChildren()) {
-                Integer nodeRow = GridPane.getRowIndex(node);
-                Button button = (Button) node;
-                Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
-
-                if(circleBounds.intersects(buttonBounds)){
-                    //variables para guardarpartes de la id
-                    String buttonId = button.getId();                                
-                    String[] parts = buttonId.split("-"); //se separa en partes la id
-                    row = Integer.parseInt(parts[2].trim());       //obtenemos solo carga del boton
-                    
-
-                }
-
-                if (nodeRow != null && nodeRow.equals(row)) {
-                    if (corriente.equals("positiva")) {
-                        node.setStyle("-fx-background-color: green;");
-                    } else if (corriente.equals("negativa")) {
-                        node.setStyle("-fx-background-color: red;");
-                    } 
-                }
-            }
-        } else{
-            GridPane gridPane = tipoGridPane.contains("pistaSuperior") ? protoboard.getPistaSuperior() : protoboard.getPistaInferior();
-            for (Node node : gridPane.getChildren()) {
-                Integer nodeCol = GridPane.getColumnIndex(node);
-                Button button = (Button) node;
-                Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
-
-                if(circleBounds.intersects(buttonBounds)){
-                    //variables para guardarpartes de la id
-                    String buttonId = button.getId();                                
-                    String[] parts = buttonId.split("-"); //se separa en partes la id
-                    col = Integer.parseInt(parts[3].trim());       //obtenemos solo carga del boton
-                }
-
-                if (nodeCol != null && nodeCol.equals(col)) {
-                    if (corriente.equals("positiva")) {
-                        node.setStyle("-fx-background-color: green;");
-                    } else if (corriente.equals("negativa")) {
-                        node.setStyle("-fx-background-color: red;");
-                    }
+            if (nodeCol != null && nodeCol.equals(col)) {
+                if (corriente.equals("positiva")) {
+                    node.setStyle("-fx-background-color: green;");
+                    cambiarParteIdBoton(button, 4, corriente);
+                } else if (corriente.equals("negativa")) {
+                    node.setStyle("-fx-background-color: red;");
+                    cambiarParteIdBoton(button, 4, corriente);
                 }
             }
         }
     }
 
-    private void mostrarVentanaMensaje(String message, String title) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
+        //Funcion que cambia una parte del id segun el index que se le pase
+        public void cambiarParteIdBoton(Button button, int index, String nuevoValor) {
+            try {
+                String buttonId = button.getId();
+                if(buttonId.equals("botonCargaNegativa") || buttonId.equals("botonCargaPositiva")){
+                    return; //sale de la funcion
+                }
+                // Dividir el ID del botón en partes
+                String[] parts = buttonId.split("-");
+                
+                // Verificar que el índice es válido
+                if (index < 0 || index >= parts.length) {
+                    throw new IllegalArgumentException("Índice fuera de rango");
+                }
+                
+                // Modificar la parte deseada
+                parts[index] = nuevoValor;
+                
+                // Unir las partes de nuevo en un solo ID y cambiarlo
+                String nuevoId = String.join("-", parts);
+                button.setId(nuevoId);
+            } catch (Exception e) {
+                System.err.println("Error en cambiarParteIdBoton: " + e.getMessage());
+                e.printStackTrace();
+                return; // Retornar el ID original en caso de error
+            }
+        }
+    
+        private String retornaUnValorDeID(Button button, int index){
+            if(button.getId().equals("botonCargaNegativa")){
+                return "negativa";
+            }else if(button.getId().equals("botonCargaPositiva")){
+                return "positiva";
+            }
+            String buttonId = button.getId();
+            String[] parts = buttonId.split("-");
+            return parts[index];
+        }
+    
 }
+
+  
