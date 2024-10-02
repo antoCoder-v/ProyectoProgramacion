@@ -150,10 +150,10 @@ public class ControladorSwitch {
 
             if (nodeCol != null && nodeCol.equals(col)) {
                 if (corriente.equals("positiva")) {
-                    node.setStyle("-fx-background-color: green;");
+                    node.setStyle("-fx-background-color: green; -fx-background-radius: 30;");
                     cambiarParteIdBoton(button, 4, corriente);
                 } else if (corriente.equals("negativa")) {
-                    node.setStyle("-fx-background-color: red;");
+                    node.setStyle("-fx-background-color: red; -fx-background-radius: 30;");
                     cambiarParteIdBoton(button, 4, corriente);
                 }
             }
