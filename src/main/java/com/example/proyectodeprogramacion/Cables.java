@@ -16,7 +16,7 @@ public class Cables {
     private Button buttonStart, buttonEnd;
     private AnchorPane pane;
     private GridPane busSuperior, busInferior, pistaSuperior, pistaInferior;
-    private String estilo, carga;   // Manejamos la carga que tienen alguno de los botones
+    private String estilo, carga; // Manejamos la carga que tienen alguno de los botones
     private List<CableInfo> cablesConectados; // Lista para almacenar los cables conectados
 
     // Clase interna para almacenar la información de los cables
@@ -32,6 +32,7 @@ public class Cables {
         }
     }
 
+    // Constructor de la clase
     public Cables(GridPane busSuperior, GridPane pistaSuperior, GridPane busInferior, GridPane pistaInferior) {
         cablesConectados = new ArrayList<>();
         this.busSuperior = busSuperior;
@@ -51,14 +52,15 @@ public class Cables {
         return buttonStart;
     }
 
-    public void actualizarGridpanes(){
+    // Metodo para actualizar los cambios en los Gridpanes
+    public void actualizarGridpanes() {
         busInferior.layout();
         busSuperior.layout();
         pistaInferior.layout();
         pistaSuperior.layout();
     }
 
-    //| Método para establecer el segundo botón y dibujar el cable
+    // | Método para establecer el segundo botón y dibujar el cable
     public void setButtonEndAndDrawCable(Button button) {
         this.buttonEnd = button;
 
@@ -66,23 +68,25 @@ public class Cables {
             if (buttonStart == buttonEnd) {
                 mostrarVentanaMensaje("No puedes conectar un botón consigo mismo.");
             } else {
-                //Verifica si ya existe un cable entre los dos botones
+                // Verifica si ya existe un cable entre los dos botones
                 CableInfo cableExistente = encontrarCable(buttonStart, buttonEnd);
                 if (cableExistente != null) {
-                    // Si existe un cable, lo eliminamos
-                    eliminarCable(cableExistente);
+                    // Si existe un cable, lo eliminamos y actualizamos cargas
+                    eliminarCable(cableExistente, buttonStart, buttonEnd);
+
                 } else {
                     // Si no existe un cable, dibujamos uno nuevo
                     drawCable();
 
-                    //indicar en la id si el boton esta conectado a un cable
-                    cambiarParteIdBoton(buttonStart, 5, "conectado"); 
+                    // indicar en la id si el boton esta conectado a un cable
+                    cambiarParteIdBoton(buttonStart, 5, "conectado");
                     cambiarParteIdBoton(buttonEnd, 5, "conectado");
 
                     // Reconocer la carga de los botones de inicio y fin
                     reconoceCarga(buttonStart, buttonEnd);
 
-                    // Llamar al método manejoCorriente para propagar el color a otros botones en la fila/columna
+                    // Llamar al método manejoCorriente para propagar el color a otros botones en la
+                    // fila/columna
                     manejoCorriente(buttonStart);
                     manejoCorriente(buttonEnd);
 
@@ -109,7 +113,8 @@ public class Cables {
         Point2D endPaneCoords = pane.sceneToLocal(endPoint);
 
         // Crear la línea que representa el cable
-        Line cable = new Line(startPaneCoords.getX(), startPaneCoords.getY(), endPaneCoords.getX(), endPaneCoords.getY());
+        Line cable = new Line(startPaneCoords.getX(), startPaneCoords.getY(), endPaneCoords.getX(),
+                endPaneCoords.getY());
         cable.setStrokeWidth(3);
         cable.setStroke(Color.BLACK);
 
@@ -121,9 +126,19 @@ public class Cables {
     }
 
     // Método para eliminar un cable
-    private void eliminarCable(CableInfo cableInfo) {
+    private void eliminarCable(CableInfo cableInfo, Button startButton, Button endButton) {
         pane.getChildren().remove(cableInfo.cable);
         cablesConectados.remove(cableInfo);
+
+        // Cambiamos la Id de los botones a desconectar
+        cambiarParteIdBoton(endButton, 5, "Desconectado");
+        cambiarParteIdBoton(startButton, 5, "Desconectado");
+
+        // Cortamos la corriente transmitida
+        manejoCorriente(endButton);
+
+        // Actualizamos corte en cadena (no funciona)
+        actualizarCorte(endButton);
     }
 
     // Método para encontrar un cable entre dos botones
@@ -144,12 +159,12 @@ public class Cables {
         }
         cambiarParteIdBoton(boton, 4, carga);
 
-        //String buttonId = boton.getId();
+        // String buttonId = boton.getId();
         String tipo = retornaUnValorDeID(boton, 1);
         int row = Integer.parseInt(retornaUnValorDeID(boton, 2));
         int col = Integer.parseInt(retornaUnValorDeID(boton, 3));
         String carga = retornaUnValorDeID(boton, 4);
-
+        String cableConectado = retornaUnValorDeID(boton, 5);
 
         // Propagar el color solo en la fila o columna correspondiente
         if (tipo.contains("busSuperior") || tipo.contains("busInferior")) {
@@ -162,10 +177,18 @@ public class Cables {
                         cambiarParteIdBoton((Button) node, 4, carga);
                     } else if (carga.equals("negativa")) {
                         cambiarParteIdBoton((Button) node, 4, carga);
+                    } else if (carga.equals("0")) {
+                        cambiarParteIdBoton((Button) node, 4, carga);
+                        node.setStyle("-fx-background-radius: 30;");
+                    }
+                    // Manejamos cuando se desconecta un cable
+                    else if (cableConectado.equals("Desconectado")) {
+                        cambiarParteIdBoton((Button) node, 4, "0");
+                        node.setStyle("-fx-background-radius: 30;");
                     }
                 }
             }
-        } else{
+        } else {
             GridPane gridPane = tipo.contains("pistaSuperior") ? pistaSuperior : pistaInferior;
             for (Node node : gridPane.getChildren()) {
                 Integer nodeCol = GridPane.getColumnIndex(node);
@@ -175,6 +198,15 @@ public class Cables {
                         cambiarParteIdBoton((Button) node, 4, carga);
                     } else if (carga.equals("negativa")) {
                         cambiarParteIdBoton((Button) node, 4, carga);
+                    } else if (carga.equals("0")) {
+                        cambiarParteIdBoton((Button) node, 4, carga);
+                        node.setStyle("-fx-background-radius: 30;");
+                        actualizarCorte((Button) node);
+                    }
+                    // Manejamos cuando se desconecta un cable
+                    else if (cableConectado.equals("Desconectado")) {
+                        cambiarParteIdBoton((Button) node, 4, "0");
+                        node.setStyle("-fx-background-radius: 30;");
                     }
                 }
             }
@@ -186,7 +218,8 @@ public class Cables {
         String carga1 = retornaUnValorDeID(boton1, 4);
         String carga2 = retornaUnValorDeID(boton2, 4);
 
-        if(carga1.contains("positiva") && carga2.contains("negativa") || carga1.contains("negativa") && carga2.contains("positiva")){
+        if (carga1.contains("positiva") && carga2.contains("negativa")
+                || carga1.contains("negativa") && carga2.contains("positiva")) {
             mostrarVentanaMensaje("No se puede conectar distintas cargas de energías");
         } else if (carga1.contains("positiva") || carga2.contains("positiva")) {
             estilo = "-fx-background-color: green; -fx-background-radius: 30;";
@@ -200,19 +233,19 @@ public class Cables {
         }
     }
 
-    //Funcion que cambia una parte del id segun el index que se le pase
+    // Funcion que cambia una parte del id segun el index que se le pase
     public void cambiarParteIdBoton(Button button, int index, String nuevoValor) {
         try {
             String buttonId = button.getId();
-            if(buttonId.equals("botonCargaNegativa") || buttonId.equals("botonCargaPositiva")){
-                return; //sale de la funcion
+            if (buttonId.equals("botonCargaNegativa") || buttonId.equals("botonCargaPositiva")) {
+                return; // sale de la funcion
             }
             // Dividir el ID del botón en partes
             String[] parts = buttonId.split("-");
-        
+
             // Modificar la parte deseada
             parts[index] = nuevoValor;
-            
+
             // Unir las partes de nuevo en un solo ID y cambiarlo
             String nuevoId = String.join("-", parts);
             button.setId(nuevoId);
@@ -223,10 +256,11 @@ public class Cables {
         }
     }
 
-    private String retornaUnValorDeID(Button button, int index){
-        if(button.getId().equals("botonCargaNegativa")){
+    // Método para retornar un valor de un ID
+    private String retornaUnValorDeID(Button button, int index) {
+        if (button.getId().equals("botonCargaNegativa")) {
             return "negativa";
-        }else if(button.getId().equals("botonCargaPositiva")){
+        } else if (button.getId().equals("botonCargaPositiva")) {
             return "positiva";
         }
         String buttonId = button.getId();
@@ -242,5 +276,49 @@ public class Cables {
         alert.setContentText(message);
         alert.showAndWait();
     }
-    
+
+    // Método para actualizar el corte de la corriente en cadena
+    private void actualizarCorte(Button endButton) {
+        String tipo = retornaUnValorDeID(endButton, 1);
+        int row = Integer.parseInt(retornaUnValorDeID(endButton, 2));
+        int col = Integer.parseInt(retornaUnValorDeID(endButton, 3));
+
+        if (tipo.contains("busSuperior") || tipo.contains("busInferior")) {
+            GridPane gridPane = tipo.contains("busSuperior") ? busSuperior : busInferior;
+            for (Node node : gridPane.getChildren()) {
+                int nodeRow = GridPane.getRowIndex(node);
+                Button button = (Button) node;
+                String cableConectado = retornaUnValorDeID(button, 5);
+                if (nodeRow == row && cableConectado.equals("Conectado")) {
+                    Button otroExtremo = encontrarOtroExtremo(button);
+                    carga = "0";
+                    manejoCorriente(otroExtremo);
+                }
+            }
+        } else {
+            GridPane gridPane = tipo.contains("pistaSuperior") ? pistaSuperior : pistaInferior;
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeCol = GridPane.getColumnIndex(node);
+                Button button = (Button) node;
+                String cableConectado = retornaUnValorDeID(button, 5);
+                if (nodeCol.equals(col) && cableConectado.equals("Conectado")) {
+                    carga = "0";
+                    Button otroExtremo = encontrarOtroExtremo(button);
+                    manejoCorriente(otroExtremo);
+                }
+            }
+        }
+    }
+
+    // Método para encontrar el otro extremo de un cable conectado a un botón
+    private Button encontrarOtroExtremo(Button button) {
+        for (CableInfo cableInfo : cablesConectados) {
+            if (cableInfo.startButton == button) {
+                return cableInfo.endButton;
+            } else if (cableInfo.endButton == button) {
+                return cableInfo.startButton;
+            }
+        }
+        return null; // Retorna null si no se encuentra ningún cable conectado
+    }
 }
