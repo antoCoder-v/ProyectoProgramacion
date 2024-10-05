@@ -21,7 +21,7 @@ public class ControladorPantallaPrincipal {
         VariablesGlobales.pantallaPrincipal = pantallaPrincipal;
         VariablesGlobales.aparecioBateria = false;
 
-        botonAgregaBateria.setOnAction(event -> cargarInterfacezElementos("bateria.fxml"));
+        botonAgregaBateria.setOnAction(event -> cargarInterfacezElementos("motor.fxml"));
         mostrarLed.setOnAction(event -> cargarInterfacezElementos("led.fxml"));
         mostrarSwitch.setOnAction(event -> cargarInterfacezElementos("switch.fxml"));
         agregarProtoboard.setOnAction(event -> cargarInterfacezElementos("protoboard.fxml"));
