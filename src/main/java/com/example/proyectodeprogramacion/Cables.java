@@ -11,36 +11,31 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Cables {
-    private Button buttonStart, buttonEnd;
+    private Button buttonStart,buttonEnd;
     private AnchorPane pane;
-    private GridPane busSuperior, busInferior, pistaSuperior, pistaInferior;
-    private String estilo;   // Manejamos la carga que tienen alguno de los botones
-    private List<CableInfo> cablesConectados; // Lista para almacenar los cables conectados
+    private GridPane busSuperior,busInferior,pistaSuperior,pistaInferior;
+    private String estilo;   //Manejamos la carga que tienen alguno de los botones
+    private Line cableSeleccionado = null; // Cable actualmente seleccionado
+   // private Line cable;
 
-    // Clase interna para almacenar la información de los cables
-    private class CableInfo {
-        Button startButton;
-        Button endButton;
-        Line cable;
+    public Cables() {
 
-        CableInfo(Button startButton, Button endButton, Line cable) {
-            this.startButton = startButton;
-            this.endButton = endButton;
-            this.cable = cable;
-        }
+
     }
 
     public Cables(GridPane busSuperior, GridPane pistaSuperior, GridPane busInferior, GridPane pistaInferior) {
-        cablesConectados = new ArrayList<>();
+        pane = VariablesGlobales.pantallaPrincipal;
+        //EliminarElementos.habilitarEliminacion(cable);
+        //recibimos los grindpane para el manejo correcto de las corrientes
+        if (busSuperior == null || pistaSuperior == null || busInferior == null || pistaInferior == null) {
+            System.out.println("Alguno de los GridPane recibidos es nulo.");
+        }
         this.busSuperior = busSuperior;
-        this.pistaSuperior = pistaSuperior;
         this.busInferior = busInferior;
+        this.pistaSuperior = pistaSuperior;
         this.pistaInferior = pistaInferior;
-        this.pane = VariablesGlobales.pantallaPrincipal; // Suponiendo que el pane se obtiene de las variables globales
     }
 
     // Método para establecer el primer botón
@@ -48,34 +43,21 @@ public class Cables {
         this.buttonStart = button;
     }
 
-    // Método para obtener el primer botón (soluciona el error)
-    public Button getButtonStart() {
-        return buttonStart;
-    }
-
     public void setButtonEndAndDrawCable(Button button) {
         this.buttonEnd = button;
 
         if (buttonStart != null && buttonEnd != null) {
-            if (buttonStart == buttonEnd) {
+            if(buttonStart == buttonEnd){
                 mostrarVentanaMensaje("No puedes conectar un botón consigo mismo.");
-            } else {
-                // Verifica si ya existe un cable entre los dos botones
-                CableInfo cableExistente = encontrarCable(buttonStart, buttonEnd);
-                if (cableExistente != null) {
-                    // Si existe un cable, lo eliminamos
-                    eliminarCable(cableExistente);
-                } else {
-                    // Si no existe un cable, dibujamos uno nuevo
-                    drawCable();
+            }else{
+                drawCable();
 
-                    // Reconocer la carga de los botones de inicio y fin
-                    reconoceCarga(buttonStart, buttonEnd);
+                // Reconocer la carga de los botones de inicio y fin
+                reconoceCarga(buttonStart, buttonEnd);
 
-                    // Llamar al método manejoCorriente para propagar el color a otros botones en la fila/columna
-                    manejoCorriente(buttonStart);
-                    manejoCorriente(buttonEnd);
-                }
+                // Llamar al método manejoCorriente para propagar el color a otros botones en la fila/columna
+                manejoCorriente(buttonStart);
+                manejoCorriente(buttonEnd);
 
                 // Reiniciar las variables temporales para otro uso
                 buttonStart = null;
@@ -83,6 +65,14 @@ public class Cables {
                 estilo = "";
             }
         }
+    }
+
+    public Button getButtonStart() {
+        return buttonStart;
+    }
+
+    public Button getButtonEnd() {
+        return buttonEnd;
     }
 
     // Método para dibujar el cable
@@ -98,30 +88,47 @@ public class Cables {
         // Crear la línea que representa el cable
         Line cable = new Line(startPaneCoords.getX(), startPaneCoords.getY(), endPaneCoords.getX(), endPaneCoords.getY());
         cable.setStrokeWidth(3);
-        cable.setStroke(Color.BLACK);
 
         // Agregar el cable al pane
         pane.getChildren().add(cable);
-
-        // Agregar el cable y los botones a la lista de cables conectados
-        cablesConectados.add(new CableInfo(buttonStart, buttonEnd, cable));
     }
 
-    // Método para eliminar un cable
-    private void eliminarCable(CableInfo cableInfo) {
-        pane.getChildren().remove(cableInfo.cable);
-        cablesConectados.remove(cableInfo);
-    }
-
-    // Método para encontrar un cable entre dos botones
-    private CableInfo encontrarCable(Button startButton, Button endButton) {
-        for (CableInfo cableInfo : cablesConectados) {
-            if ((cableInfo.startButton == startButton && cableInfo.endButton == endButton) ||
-                    (cableInfo.startButton == endButton && cableInfo.endButton == startButton)) {
-                return cableInfo;
+    // Método para habilitar la edición del cable
+    private void enableCableEdit(Line cable) {
+        // Evento para seleccionar el cable al hacer clic izquierdo
+        cable.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                // Resaltar el cable cuando esté seleccionado
+                cable.setStroke(Color.BLUE);
+                cableSeleccionado = cable;
             }
-        }
-        return null;
+            // Evento para eliminar el cable al hacer clic derecho
+            if (event.getButton() == MouseButton.SECONDARY) {
+                pane.getChildren().remove(cable);
+            }
+        });
+
+        // Evento para arrastrar el cable y moverlo
+        cable.setOnMouseDragged(event -> {
+            if (cableSeleccionado != null) {
+                // Obtener las nuevas coordenadas y actualizar la posición del cable
+                double newX = event.getX();
+                double newY = event.getY();
+
+                // Actualizar solo el punto final para simular el arrastre
+                cableSeleccionado.setEndX(newX);
+                cableSeleccionado.setEndY(newY);
+            }
+        });
+    }
+
+    // Método para mostrar una ventana de mensaje
+    private void mostrarVentanaMensaje(String message) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Mensaje");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     // Método para manejar la corriente
@@ -131,7 +138,7 @@ public class Cables {
         int row = -1;
         int col = -1;
 
-        // Sepamos los datos que están en el ID
+        //sepamos los datos que estan en el ID
         if (buttonId != null && buttonId.startsWith("Button -")) {
             String[] parts = buttonId.split("-");
             if (parts.length == 4) {
@@ -163,27 +170,17 @@ public class Cables {
         }
     }
 
-    // Método para reconocer la carga (color) de los botones
-    private void reconoceCarga(Button boton1, Button boton2) {
+    private void reconoceCarga(Button boton1, Button boton2){
         String style1 = boton1.getStyle();
         String style2 = boton2.getStyle();
-        if (style1.contains("green") && style2.contains("red") || style1.contains("red") && style2.contains("green")) {
-            mostrarVentanaMensaje("No se puede conectar distintas cargas de energías");
-        } else if (style1.contains("green") || style2.contains("green")) {
+        if(style1.contains("green") && style2.contains("red") || style1.contains("red") && style2.contains("green")){
+            mostrarVentanaMensaje("No se puede conectar distintas cargas de energias");
+        }else if(style1.contains("green") || style2.contains("green")){
             estilo = "-fx-background-color: green; -fx-background-radius: 30;";
-        } else if (style1.contains("red") || style2.contains("red")) {
+        }else if(style1.contains("red") || style2.contains("red")){
             estilo = "-fx-background-color: red; -fx-background-radius: 30;";
-        } else {
+        }else{
             estilo = "-fx-background-radius: 30;";
         }
-    }
-
-    // Método para mostrar una ventana de mensaje
-    private void mostrarVentanaMensaje(String message) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Mensaje");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
