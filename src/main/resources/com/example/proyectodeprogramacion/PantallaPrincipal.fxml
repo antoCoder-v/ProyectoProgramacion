@@ -31,5 +31,7 @@
             <Font name="Comic Sans MS" size="12.0" />
          </font>
       </Button>
+      <Button fx:id="botonSwitch3X3" layoutX="14.0" layoutY="67.0" mnemonicParsing="false" text="Agregar Switch 3x3" />
+      <Button fx:id="mostrarChip" layoutX="144.0" layoutY="67.0" mnemonicParsing="false" text="AgregarChip" />
     </children>
 </AnchorPane>
