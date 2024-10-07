@@ -10,7 +10,7 @@ import javafx.scene.layout.AnchorPane;
 public class ControladorPantallaPrincipal {
 
     @FXML
-    private Button mostrarLed,mostrarSwitch,agregarProtoboard,botonAgregaBateria,verCircuito;
+    private Button mostrarLed, mostrarSwitch, agregarProtoboard, botonAgregaBateria, verCircuito, botonSwitch3X3;
     @FXML
     private AnchorPane pantallaPrincipal;
 
@@ -25,13 +25,13 @@ public class ControladorPantallaPrincipal {
         mostrarLed.setOnAction(event -> cargarInterfacezElementos("led.fxml"));
         mostrarSwitch.setOnAction(event -> cargarInterfacezElementos("switch.fxml"));
         agregarProtoboard.setOnAction(event -> cargarInterfacezElementos("protoboard.fxml"));
-        verCircuito.setOnAction(actionEvent -> verConexion());
+        botonSwitch3X3.setOnAction(event -> cargarInterfacezElementos("Switch3X3.fxml"));
+        // verCircuito.setOnAction(actionEvent -> verConexion());
 
     }
 
-
     // Método que carga la interfaces de los elemtentos de los botones
-    private void cargarInterfacezElementos(String nombre){
+    private void cargarInterfacezElementos(String nombre) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(nombre));
             // Carga el archivo FXML
@@ -44,7 +44,8 @@ public class ControladorPantallaPrincipal {
 
         }
     }
-    private void verConexion(){
+
+    private void verConexion() {
         VariablesGlobales.controladorProtoboard.verificarCircuitoCerrado();
     }
 }
