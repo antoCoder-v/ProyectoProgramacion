@@ -2,6 +2,8 @@ package com.example.proyectodeprogramacion;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.scene.control.Alert;
+import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -45,6 +47,8 @@ public class ControladorLed {
 
         //verifica si led recibe corriente positiva y negativa, al moverlo
         ledPane.setOnMouseDragged(this::onMouseDragged);
+        ledPane.setOnMouseReleased(this::onMouseReleased);
+
 
     }
 
@@ -64,15 +68,17 @@ public class ControladorLed {
     private void onMouseDragged(MouseEvent event){
         ledPane.setLayoutX(event.getSceneX() - offsetX);
         ledPane.setLayoutY(event.getSceneY() - offsetY);
+    }
 
+    // Método para verificar cuando el LED ha sido colocado
+    private void onMouseReleased(MouseEvent event) {
         verificarCorrienteLED(protoboard);
 
         if(corrientePositiva && corrienteNegativa){
             cambiarColor("yellow");
-        }else{
+        } else {
             cambiarColor("red");
         }
-            
     }
 
     // Método para verificar si el LED está correctamente colocado y recibiendo corriente
@@ -81,24 +87,35 @@ public class ControladorLed {
             System.out.println("Protoboard no está asignado.");
             return;
         }
+        boolean patita1ConectadaAPositiva = false;
+        boolean patita2ConectadaAPositiva = false;
 
-        // Verificar si patita esta en algun boton de la protoboard
-        verificarPatitasEnGridPane(protoboard.getBusSuperior(), patita1, "Patita 1");
-        verificarPatitasEnGridPane(protoboard.getPistaSuperior(), patita1, "Patita 1");
-        verificarPatitasEnGridPane(protoboard.getBusInferior(), patita1, "Patita 1");
-        verificarPatitasEnGridPane(protoboard.getPistaInferior(), patita1, "Patita 1");
+        // Verificar si patita está en algún botón de la protoboard
+        patita1ConectadaAPositiva = verificarPatitasEnGridPane(protoboard.getBusSuperior(), patita1, "Patita 1")
+                || verificarPatitasEnGridPane(protoboard.getPistaSuperior(), patita1, "Patita 1")
+                || verificarPatitasEnGridPane(protoboard.getBusInferior(), patita1, "Patita 1")
+                || verificarPatitasEnGridPane(protoboard.getPistaInferior(), patita1, "Patita 1");
 
-        verificarPatitasEnGridPane(protoboard.getBusSuperior(), patita2, "Patita 2");
-        verificarPatitasEnGridPane(protoboard.getPistaSuperior(), patita2, "Patita 2");
-        verificarPatitasEnGridPane(protoboard.getBusInferior(), patita2, "Patita 2");
-        verificarPatitasEnGridPane(protoboard.getPistaInferior(), patita2, "Patita 2");
+        patita2ConectadaAPositiva = verificarPatitasEnGridPane(protoboard.getBusSuperior(), patita2, "Patita 2")
+                || verificarPatitasEnGridPane(protoboard.getPistaSuperior(), patita2, "Patita 2")
+                || verificarPatitasEnGridPane(protoboard.getBusInferior(), patita2, "Patita 2")
+                || verificarPatitasEnGridPane(protoboard.getPistaInferior(), patita2, "Patita 2");
 
+        // Procedimientos basados en el estado de las patitas
+        if (patita1ConectadaAPositiva || patita2ConectadaAPositiva == false) {
+            AudioClip explosionSound = new AudioClip(getClass().getResource("/Audio/explosion.wav").toExternalForm());
+            explosionSound.play();
+            mostrarVentanaMensaje("EL LED SE HA SOBRECALENTADO HASTA EXPLOTAR", "ERROR DE EXPLOSION");
+            System.out.println("El LED ha explotado porque una patita está conectada a corriente positiva.");
+        }
     }
 
     // funcion que nos indica si las patitas del led coinciden con los botones de la protoboard y si estan recibiendo corriente
-    private void verificarPatitasEnGridPane(GridPane gridPane, Circle patitas, String patita) {
+    private Boolean verificarPatitasEnGridPane(GridPane gridPane, Circle patitas, String patita) {
         // Obtener la posición de las patitas del LED
-        Bounds patitaBounds = patitas.localToScene(patita1.getBoundsInLocal());
+        //Bounds patitaBounds = patitas.localToScene(patita1.getBoundsInLocal());
+        Bounds patitaBounds = patitas.localToScene(patitas.getBoundsInLocal());
+        String cargaRetornada = "neutra";
 
         for (Node node : gridPane.getChildren()) {
             if (node instanceof Button) {
@@ -118,7 +135,7 @@ public class ControladorLed {
                     if(carga.equals("positiva")){ //si la carga es positiva
                         patitas.setFill(Color.GREEN);
                         corrientePositiva = true;
-
+                        return true;
                     }else if(carga.equals("negativa")){ //si la carga es negativa
                         patitas.setFill(Color.RED);
                         corrienteNegativa = true;
@@ -130,7 +147,15 @@ public class ControladorLed {
                 }
             }
         }
+        return false;
     }
-
+    // Método para mostrar una ventana de mensaje
+    private void mostrarVentanaMensaje(String message, String title) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
 }

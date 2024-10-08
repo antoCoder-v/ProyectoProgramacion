@@ -9,9 +9,9 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="PantallaProtoboard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="391.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodeprogramacion.ControladorProtoboard">
+<AnchorPane fx:id="PantallaProtoboard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="367.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodeprogramacion.ControladorProtoboard">
     <children>
-        <Rectangle fill="lightgray" height="374.0" layoutX="9.0" layoutY="9.0" stroke="black" strokeWidth="2.0" width="642.0" />
+        <Rectangle fill="lightgray" height="355.0" layoutX="7.0" layoutY="7.0" stroke="black" strokeWidth="2.0" width="646.0" />
         <GridPane fx:id="busSuperior" layoutX="80.0" layoutY="22.0" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: gray;">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
@@ -86,9 +86,9 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
         </GridPane>
-        <Line endX="-178.0" endY="50.0" layoutX="195.0" layoutY="146.0" startX="447.5999755859375" startY="50.0" stroke="black" strokeWidth="5.0" />
+        <Line endX="-160.0" endY="50.0" layoutX="200.0" layoutY="132.0" startX="420.0" startY="50.0" stroke="#000000a2" strokeWidth="20.0" />
         <Line endX="60.0" endY="60.0" layoutX="5.0" layoutY="-38.0" startX="590.0" startY="60.0" stroke="#2b00ff" strokeWidth="2.0" />
-        <GridPane fx:id="busInferior" layoutX="80.0" layoutY="326.0" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: gray;">
+        <GridPane fx:id="busInferior" layoutX="80.0" layoutY="305.0" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: gray;">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
@@ -121,7 +121,7 @@
                 <RowConstraints maxHeight="19.0" minHeight="10.0" prefHeight="19.0" vgrow="SOMETIMES" />
             </rowConstraints>
         </GridPane>
-        <GridPane fx:id="pistaInferior" layoutX="30.0" layoutY="219.0" prefHeight="90.0" prefWidth="400.0" style="-fx-background-color: gray;">
+        <GridPane fx:id="pistaInferior" layoutX="30.0" layoutY="192.0" prefHeight="90.0" prefWidth="400.0" style="-fx-background-color: gray;">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="20.0" />
@@ -163,8 +163,8 @@
             </rowConstraints>
         </GridPane>
         <Line endX="60.0" endY="60.0" layoutX="5.0" layoutY="3.0" startX="590.0" startY="60.0" stroke="RED" strokeWidth="2.0" />
-        <Line endX="60.0" endY="60.0" layoutX="5.0" layoutY="265.0" startX="590.0" startY="60.0" stroke="#0900ff" strokeWidth="2.0" />
-        <Line endX="60.0" endY="60.0" layoutX="5.0" layoutY="306.0" startX="590.0" startY="60.0" stroke="RED" strokeWidth="2.0" />
+        <Line endX="60.0" endY="60.0" layoutX="5.0" layoutY="244.0" startX="590.0" startY="60.0" stroke="#0900ff" strokeWidth="2.0" />
+        <Line endX="60.0" endY="60.0" layoutX="5.0" layoutY="286.0" startX="590.0" startY="60.0" stroke="RED" strokeWidth="2.0" />
         <Label layoutX="582.0" layoutY="8.0" rotate="-90.0" text="-" textFill="BLUE">
             <font>
                 <Font size="34.0" />
@@ -175,17 +175,17 @@
                 <Font size="34.0" />
             </font>
         </Label>
-        <Label layoutX="57.0" layoutY="308.0" rotate="-90.0" text="-" textFill="BLUE">
+        <Label layoutX="57.0" layoutY="290.0" rotate="-90.0" text="-" textFill="BLUE">
             <font>
                 <Font size="34.0" />
             </font>
         </Label>
-        <Label layoutX="582.0" layoutY="308.0" rotate="-90.0" text="-" textFill="BLUE">
+        <Label layoutX="582.0" layoutY="290.0" rotate="-90.0" text="-" textFill="BLUE">
             <font>
                 <Font size="34.0" />
             </font>
         </Label>
-        <Label ellipsisString="" layoutX="583.0" layoutY="340.0" text="+" textFill="#ff2600">
+        <Label ellipsisString="" layoutX="583.0" layoutY="320.0" text="+" textFill="#ff2600">
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>
@@ -200,17 +200,12 @@
                 <Font name="System Bold" size="18.0" />
             </font>
         </Label>
-        <Label ellipsisString="" layoutX="64.0" layoutY="340.0" text="+" textFill="#ff2600">
+        <Label ellipsisString="" layoutX="64.0" layoutY="320.0" text="+" textFill="#ff2600">
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>
         </Label>
-        <Label layoutX="597.0" layoutY="254.0" rotate="-90.0" text=" a  b  c  d  e " textFill="#0000008d">
-            <font>
-                <Font size="14.0" />
-            </font>
-        </Label>
-        <Label layoutX="607.0" layoutY="117.0" rotate="-90.0" text="g  h  i  j  k" textFill="#0000008a">
+        <Label layoutX="600.0" layoutY="227.0" rotate="-90.0" text=" A B  C  D  E " textFill="#0000008d">
             <font>
                 <Font size="14.0" />
             </font>
@@ -220,10 +215,25 @@
                 <Font size="13.0" />
             </font>
         </Label>
-        <Label layoutX="30.0" layoutY="306.0" prefHeight="22.0" prefWidth="610.0" text=" 1   2   3   4   5   6   7   8  9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30" textFill="#00000081">
+        <Label layoutX="30.0" layoutY="282.0" prefHeight="22.0" prefWidth="610.0" text=" 1   2   3   4   5   6   7   8  9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30" textFill="#00000081">
             <font>
                 <Font size="13.0" />
             </font>
         </Label>
+      <Label layoutX="-12.0" layoutY="117.0" rotate="-90.0" text="G  H  I  J  K" textFill="#0000008a">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="604.0" layoutY="117.0" rotate="-90.0" text="G  H  I  J  K" textFill="#0000008a">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="-17.0" layoutY="227.0" rotate="-90.0" text=" A B  C  D  E " textFill="#0000008d">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>

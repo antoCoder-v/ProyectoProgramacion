@@ -9,9 +9,13 @@ import javafx.scene.layout.AnchorPane;
 public class ControladorBateria {
 
     @FXML
-    private Button botonCargaNegativa,botonCargaPositiva;
+    private Button botonCargaPositiva;
+    @FXML
+    private Button botonCargaNegativa;
     @FXML
     private AnchorPane paneBateria;
+    @FXML
+    private Button corrriente;
 
     //variables para almacenar la posición del mouse
     private double offsetX,offsetY;

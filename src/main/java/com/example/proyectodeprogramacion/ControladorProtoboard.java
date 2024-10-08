@@ -9,11 +9,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.AudioClip;
 
-
 public class ControladorProtoboard {
 
     @FXML
-    private GridPane busSuperior,pistaSuperior,busInferior,pistaInferior;
+    private GridPane busSuperior, pistaSuperior, busInferior, pistaInferior;
 
     @FXML
     private Pane mainPane;
@@ -21,12 +20,10 @@ public class ControladorProtoboard {
     @FXML
     private AnchorPane PantallaProtoboard;
 
-    //Clases externas
+    // Clases externas
     private Cables cableManager;
-    private ControladorSwitch elementoSwitch;
-    private ControladorLed elementoLed;
 
-    private double offsetX,offsetY; //variables para almacenar la posición del mouse
+    private double offsetX, offsetY; // variables para almacenar la posición del mouse
 
     public GridPane getBusSuperior() {
         return busSuperior;
@@ -50,8 +47,8 @@ public class ControladorProtoboard {
 
         // Habilitar eliminación con clic derecho para la protoboard
         EliminarElementos.habilitarEliminacion(PantallaProtoboard);
-        //elementoLed = new ControladorLed();
-        //elementoSwitch = VariablesGlobales.controladorSwitch;
+        // elementoLed = new ControladorLed();
+        // elementoSwitch = VariablesGlobales.controladorSwitch;
         // Agregar botones a busSuperior
         agregarBotonesGridPane(busSuperior, "busSuperior");
 
@@ -64,7 +61,7 @@ public class ControladorProtoboard {
         // Agregar botones a pistaInferior
         agregarBotonesGridPane(pistaInferior, "pistaInferior");
 
-        //Manejamos los movimientos del mouse en el paneBateria
+        // Manejamos los movimientos del mouse en el paneBateria
         PantallaProtoboard.setOnMousePressed(this::handleMousePressed);
         PantallaProtoboard.setOnMouseDragged(this::handleMouseDragged);
 
@@ -73,10 +70,8 @@ public class ControladorProtoboard {
 
     // Método que recorre un GridPane y añade botones en cada celda
     private void agregarBotonesGridPane(GridPane gridPane, String tipo) {
-
         int rows = gridPane.getRowConstraints().size();
         int columns = gridPane.getColumnConstraints().size();
-
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 Button button = new Button();
@@ -86,10 +81,11 @@ public class ControladorProtoboard {
                 button.setStyle("-fx-background-radius: 30;");
 
                 // Asignar un ID basado en la posición
-                //button + tipo + row + col + carga + cableConectado
-                button.setId("Button -"+ tipo+ "-"+ row + "-" + col + "-0-desconectado"); //carga "0 y no" por defecto
+                // button + tipo + row + col + carga + cableConectado
+                button.setId("Button -" + tipo + "-" + row + "-" + col + "-0-desconectado"); // carga "0 y no" por
+                                                                                             // defecto
 
-                //manejamos el clic a la protoboard
+                // manejamos el clic a la protoboard
                 button.setOnAction(event -> {
                     onButtonClicked(button, tipo);
                 });
@@ -99,15 +95,18 @@ public class ControladorProtoboard {
             }
         }
     }
+
     // Método para manejar cuando se hace clic en un botón de la protoboard
     public void onButtonClicked(Button button, String tipo) {
         int row = GridPane.getRowIndex(button);
         // Verificamos que la bateria se conecte correctamente
-        if(VariablesGlobales.botonPresionadoBateria != null && tipo.equals("busSuperior")){
-            if(VariablesGlobales.botonPresionadoBateria.getStyle().contains("green") && row == 0 || VariablesGlobales.botonPresionadoBateria.getStyle().contains("red") && row == 1){
-                AudioClip explosionSound = new AudioClip(getClass().getResource("/Audio/explosion.wav").toExternalForm());
+        if (VariablesGlobales.botonPresionadoBateria != null && tipo.equals("busSuperior")) {
+            if (VariablesGlobales.botonPresionadoBateria.getStyle().contains("green") && row == 0
+                    || VariablesGlobales.botonPresionadoBateria.getStyle().contains("red") && row == 1) {
+                AudioClip explosionSound = new AudioClip(
+                        getClass().getResource("/Audio/explosion.wav").toExternalForm());
                 explosionSound.play();
-                mostrarVentanaMensaje("LA BATERIA SE HA SOBRECALENTADO HASTA EXPLOTAR","ERROR DE EXPLOSION");
+                mostrarVentanaMensaje("LA BATERIA SE HA SOBRECALENTADO HASTA EXPLOTAR", "ERROR DE EXPLOSION");
                 // Reiniciar el botón presionado de la batería
                 VariablesGlobales.botonPresionadoBateria = null;
                 VariablesGlobales.aparecioBateria = false;
@@ -126,7 +125,7 @@ public class ControladorProtoboard {
         } else {
             // Si ya hay un botón de inicio, configúralo como final y dibuja el cable
             cableManager.setButtonEndAndDrawCable(button);
-            
+
         }
     }
 
@@ -142,17 +141,17 @@ public class ControladorProtoboard {
 
     // Método para verificar si el circuito está cerrado
     public void verificarCircuitoCerrado() {
-        System.out.println("Corriente led es: "+VariablesGlobales.corrienteLed);
-        System.out.println("Corriente Switch es: "+VariablesGlobales.corrienteSwitch);
+        System.out.println("Corriente led es: " + VariablesGlobales.corrienteLed);
+        System.out.println("Corriente Switch es: " + VariablesGlobales.corrienteSwitch);
         if (VariablesGlobales.corrienteSwitch && VariablesGlobales.corrienteLed) {
             System.out.println("El circuito está cerrado correctamente.");
-            //aqui cambiar color
+            // aqui cambiar color
             VariablesGlobales.elementoLed.cambiarColor("yellow");
-            mostrarVentanaMensaje("El CIRCUITO fue correctamente conectado","Circuito cerrado");
+            mostrarVentanaMensaje("El CIRCUITO fue correctamente conectado", "Circuito cerrado");
         } else if (VariablesGlobales.corrienteSwitch && !VariablesGlobales.corrienteLed) {
-            mostrarVentanaMensaje("SWITCH recibe corriente pero LED NO esta recibiendo corriente","ERROR");
-        }else if (VariablesGlobales.corrienteLed && !VariablesGlobales.corrienteSwitch) {
-            mostrarVentanaMensaje("LED recibe corriente pero SWITCH NO esta recibiendo corriente","ERROR");
+            mostrarVentanaMensaje("SWITCH recibe corriente pero LED NO esta recibiendo corriente", "ERROR");
+        } else if (VariablesGlobales.corrienteLed && !VariablesGlobales.corrienteSwitch) {
+            mostrarVentanaMensaje("LED recibe corriente pero SWITCH NO esta recibiendo corriente", "ERROR");
         }
     }
 
