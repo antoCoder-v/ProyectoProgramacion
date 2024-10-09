@@ -66,6 +66,7 @@ public class ControladorProtoboard {
         PantallaProtoboard.setOnMouseDragged(this::handleMouseDragged);
 
         cableManager = new Cables(busSuperior, pistaSuperior, busInferior, pistaInferior);
+        VariablesGlobales.cables = cableManager;
     }
 
     // Método que recorre un GridPane y añade botones en cada celda

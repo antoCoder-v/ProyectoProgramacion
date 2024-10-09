@@ -1,5 +1,9 @@
 package com.example.proyectodeprogramacion;
 
+import java.util.List;
+
+import com.example.proyectodeprogramacion.Cables.CableInfo;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -29,13 +33,14 @@ public class ControladorSwitch3X3 {
 
     private boolean pasoCorrienteSwitch = false;
     private ControladorProtoboard protoboard;
+    private Cables cables;
     private int columna1, columna2; // Columnas de los botones a los que se les pasa corriente
-    private String corriente = "0", tipoGridPane = "", gridPaneVecino; // Variable para guardar la corriente y el tipo
-                                                                       // de gridpane
+    private String corriente = "0", tipoGridPane = "", gridPaneVecino; // Variable para guardar la corriente y el tipo de gridpane
 
     @FXML
     public void initialize() {
         protoboard = VariablesGlobales.controladorProtoboard;
+        cables = VariablesGlobales.cables;
 
         // Configura los eventos cuando se presiona el Switch
         switchPane.setOnMousePressed(this::handleMousePressed);
@@ -48,6 +53,7 @@ public class ControladorSwitch3X3 {
         encender.setOnAction(event -> {
             pasoCorrienteSwitch = !pasoCorrienteSwitch; // Cambia el paso de corriente
             manejoDeCorriente();
+            //actualizarCorrienteTodos();
         });
     }
 
@@ -154,8 +160,7 @@ public class ControladorSwitch3X3 {
             return;
         }
 
-        GridPane gridPane = gridPaneVecino.contains("pistaSuperior") ? protoboard.getPistaSuperior()
-                : protoboard.getPistaInferior();
+        GridPane gridPane = gridPaneVecino.contains("pistaSuperior") ? protoboard.getPistaSuperior(): protoboard.getPistaInferior();
         for (Node node : gridPane.getChildren()) {
             Button button = (Button) node;
             Integer nodeCol = GridPane.getColumnIndex(node);
@@ -174,8 +179,7 @@ public class ControladorSwitch3X3 {
 
     // manejamos el traspaso de corriente al lado derecho de swicth
     private void manejoDeCorriente() {
-        GridPane gridPane = tipoGridPane.contains("pistaSuperior") ? protoboard.getPistaSuperior()
-                : protoboard.getPistaInferior();
+        GridPane gridPane = tipoGridPane.contains("pistaSuperior") ? protoboard.getPistaSuperior(): protoboard.getPistaInferior();
         for (Node node : gridPane.getChildren()) {
             Button button = (Button) node;
             Integer nodeCol = GridPane.getColumnIndex(node);
@@ -223,5 +227,101 @@ public class ControladorSwitch3X3 {
             e.printStackTrace();
             return; // Retornar el ID original en caso de error
         }
+    }
+
+    //Funcion para actualizar la corriente de todos los botones
+    public void actualizarCorrienteTodos() {
+        // Recorrer todos los GridPane
+        GridPane[] gridPanes = {protoboard.getBusInferior(), protoboard.getBusSuperior(), protoboard.getPistaInferior(), protoboard.getPistaSuperior()};
+        
+        for (GridPane gridPane : gridPanes) {
+            for (Node node : gridPane.getChildren()) {
+                Button button = (Button) node;
+                String conexion = retornaUnValorDeID(button, 5);
+                String estilo = "";
+
+                //identificamos cable conectado
+                if (conexion.equals("conectado")) {
+                    //reconocemos carga
+                    String carga = retornaUnValorDeID(button, 4);
+                    System.out.println("carga"+ carga);
+                    //cambiarParteIdBoton(button, 4, carga);
+                    if(carga.contains("positiva")){
+                        estilo = "-fx-background-color: green; -fx-background-radius: 30;";
+                    }else if(carga.contains("negativa")){
+                        estilo = "-fx-background-color: red; -fx-background-radius: 30;";
+                    }else{
+                        estilo = "-fx-background-radius: 30;";
+                    }
+                    
+
+                    //buscamo su otro extremo
+                    Button otroExtremo = encontrarOtroExtremo(button);
+                    manejoCorriente(otroExtremo, carga, estilo);
+
+                    carga = "0";
+                    estilo = "";
+                }
+                
+            }
+        }
+    }
+
+    private void manejoCorriente(Button boton, String carga, String estilo) {
+        //verificamos si es un boton de bateria
+        if (boton.getId().equals("botonCargaNegativa") || boton.getId().equals("botonCargaPositiva")) {
+            return; // Sale de la función
+        }
+
+        // String buttonId = boton.getId();
+        String tipo = retornaUnValorDeID(boton, 1);
+        int row = Integer.parseInt(retornaUnValorDeID(boton, 2));
+        int col = Integer.parseInt(retornaUnValorDeID(boton, 3));
+
+        // Propagar el color solo en la fila o columna correspondiente
+        if (tipo.contains("busSuperior") || tipo.contains("busInferior")) {
+            GridPane gridPane = tipo.contains("busSuperior") ? protoboard.getBusInferior() : protoboard.getBusSuperior();
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeRow = GridPane.getRowIndex(node);
+                if (nodeRow != null && nodeRow.equals(row)) {
+                    node.setStyle(estilo);
+                    cambiarParteIdBoton((Button) node, 4, carga);
+                }
+            }
+        } else {
+            GridPane gridPane = tipo.contains("pistaSuperior") ? protoboard.getBusInferior() : protoboard.getBusSuperior();
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeCol = GridPane.getColumnIndex(node);
+                if (nodeCol != null && nodeCol.equals(col)) {
+                    node.setStyle(estilo);
+                    cambiarParteIdBoton((Button) node, 4, carga);
+                }
+            }
+        }
+    }
+
+    // Método para retornar un valor de un ID
+    private String retornaUnValorDeID(Button button, int index) {
+        if (button.getId().equals("botonCargaNegativa")) {
+            return "negativa";
+        } else if (button.getId().equals("botonCargaPositiva")) {
+            return "positiva";
+        }
+        String buttonId = button.getId();
+        String[] parts = buttonId.split("-");
+        return parts[index];
+    }
+
+    // Método para encontrar el otro extremo de un cable conectado a un botón
+    private Button encontrarOtroExtremo(Button button) {
+        List<Cables.CableInfo> cablesConectados = cables.getCablesConectados();
+        for (CableInfo cableInfo : cablesConectados) {
+            if (cableInfo.startButton == button) {
+                return cableInfo.endButton;
+            } else if (cableInfo.endButton == button) {
+                return cableInfo.startButton;
+            }
+        }
+        return null; // Retorna null si no se encuentra ningún cable conectado
     }
 }
