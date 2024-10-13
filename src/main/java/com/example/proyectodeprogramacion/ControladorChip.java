@@ -5,10 +5,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.input.MouseEvent;
 
 public class ControladorChip {
-<<<<<<< HEAD
-
-=======
->>>>>>> c244df6 (Unión semana 8)
     @FXML
     private AnchorPane paneChip; // Este es el contenedor del chip en la interfaz
 
@@ -36,10 +32,6 @@ public class ControladorChip {
         paneChip.setLayoutX(event.getSceneX() - offsetX);
         paneChip.setLayoutY(event.getSceneY() - offsetY);
     }
-<<<<<<< HEAD
-}
-=======
 
 }
 
->>>>>>> c244df6 (Unión semana 8)
