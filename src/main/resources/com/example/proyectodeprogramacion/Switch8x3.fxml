@@ -1,44 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Scene?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<Scene xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodeprogramacion.ControladorSwitch8x3">
+<AnchorPane fx:id="paneSwitch8x3" prefHeight="50.0" prefWidth="140.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodeprogramacion.ControladorSwitch8x3">
+    <children>
+        <AnchorPane layoutX="-4.0" layoutY="-20.0" prefHeight="80.0" prefWidth="180.0">
+            <children>
+                <!-- Rectángulo de la base del chip (más delgado y largo) -->
+                <Rectangle fx:id="chipBase" arcHeight="3.0" arcWidth="3.0" height="30.0" layoutX="5.0" layoutY="40.0" stroke="BLACK" strokeType="INSIDE" width="159.0" />
 
-    <AnchorPane fx:id="paneSwitch8x3" prefHeight="65.0" prefWidth="123.0">
-        <children>
-            <AnchorPane layoutX="-4.0" layoutY="-31.0" prefHeight="96.0" prefWidth="164.0">
-                <children>
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" height="48.0" layoutX="4.0" layoutY="38.0" stroke="BLACK" strokeType="INSIDE" width="160.0" />
-                    <Rectangle fx:id="chipBase" arcHeight="5.0" arcWidth="5.0" height="48.0" layoutX="4.0" layoutY="38.0" stroke="BLACK" strokeType="INSIDE" width="160.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="47.0" layoutY="31.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="67.0" layoutY="31.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="88.0" layoutY="31.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="107.0" layoutY="31.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="128.0" layoutY="31.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="148.0" layoutY="31.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="10.0" layoutY="79.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="29.0" layoutY="79.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="47.0" layoutY="79.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="67.0" layoutY="79.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="88.0" layoutY="79.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="106.0" layoutY="80.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="128.0" layoutY="80.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="148.0" layoutY="79.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="29.0" layoutY="31.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="10.0" layoutY="31.0" stroke="BLACK" strokeType="INSIDE" width="9.0" />
-                    <RadioButton layoutX="7.0" layoutY="53.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="15.0" />
-                    <RadioButton layoutX="26.0" layoutY="53.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="15.0" />
-                    <RadioButton layoutX="44.0" layoutY="53.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="15.0" />
-                    <RadioButton layoutX="64.0" layoutY="53.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="15.0" />
-                    <RadioButton layoutX="85.0" layoutY="53.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="15.0" />
-                    <RadioButton layoutX="104.0" layoutY="53.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="15.0" />
-                    <RadioButton layoutX="125.0" layoutY="53.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="15.0" />
-                    <RadioButton layoutX="145.0" layoutY="53.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="15.0" />
-                </children>
-            </AnchorPane>
-        </children>
-    </AnchorPane>
-</Scene>
+                <!-- Patas superiores (ajustadas al nuevo tamaño) -->
+                <Rectangle fx:id="patSup1" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="10.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patSup2" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="30.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patSup3" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="50.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patSup4" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="70.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patSup5" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="90.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patSup6" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="110.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patSup7" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="130.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patSup8" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="150.0" layoutY="30.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+
+                <!-- Patas inferiores (ajustadas al nuevo tamaño) -->
+                <Rectangle fx:id="patInf1" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="10.0" layoutY="70.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patInf2" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="30.0" layoutY="70.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patInf3" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="50.0" layoutY="70.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patInf4" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="70.0" layoutY="70.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patInf5" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="90.0" layoutY="70.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patInf6" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="110.0" layoutY="70.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patInf7" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="130.0" layoutY="70.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+                <Rectangle fx:id="patInf8" arcHeight="3.0" arcWidth="3.0" fill="DODGERBLUE" height="10.0" layoutX="150.0" layoutY="70.0" stroke="BLACK" strokeType="INSIDE" width="8.0" />
+
+                <!-- Botones del switch (ajustados al nuevo tamaño) -->
+                <RadioButton fx:id="bot1" layoutX="6.0" layoutY="47.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="10.0" />
+                <RadioButton fx:id="bot2" layoutX="26.0" layoutY="47.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="10.0" />
+                <RadioButton fx:id="bot3" layoutX="46.0" layoutY="47.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="10.0" />
+                <RadioButton fx:id="bot4" layoutX="66.0" layoutY="47.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="10.0" />
+                <RadioButton fx:id="bot5" layoutX="86.0" layoutY="47.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="10.0" />
+                <RadioButton fx:id="bot6" layoutX="106.0" layoutY="47.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="10.0" />
+                <RadioButton fx:id="bot7" layoutX="126.0" layoutY="47.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="10.0" />
+                <RadioButton fx:id="bot8" layoutX="146.0" layoutY="47.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="10.0" />
+
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>
