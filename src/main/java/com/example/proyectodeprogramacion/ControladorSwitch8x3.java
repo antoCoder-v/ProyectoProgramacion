@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.input.MouseEvent;
 
-public class ControladorChip {
+public class ControladorSwitch8x3 {
     @FXML
     private AnchorPane paneChip; // Este es el contenedor del chip en la interfaz
 
