@@ -26,7 +26,7 @@
                 <Font name="Comic Sans MS" size="12.0" />
             </font>
         </Button>
-      <Button fx:id="verCircuito" layoutX="469.0" layoutY="31.0" mnemonicParsing="false" text="Verificar Circuito">
+      <Button fx:id="agregaResistencia" layoutX="469.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Resistencia">
          <font>
             <Font name="Comic Sans MS" size="12.0" />
          </font>
