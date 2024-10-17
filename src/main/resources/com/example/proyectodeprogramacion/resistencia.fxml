@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+
+<AnchorPane fx:id="paneResistencia" prefHeight="12.0" prefWidth="38.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodeprogramacion.ControladorResistencia">
+   <children>
+      <Rectangle fx:id="pata2" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="6.0" layoutX="26.0" layoutY="5.0" stroke="BLACK" strokeType="INSIDE" width="13.0" />
+      <Rectangle fx:id="pata1" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="6.0" layoutX="2.0" layoutY="5.0" stroke="BLACK" strokeType="INSIDE" width="13.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="12.0" layoutX="13.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+   </children>
+</AnchorPane>

@@ -15,7 +15,7 @@ import javafx.geometry.Bounds;
 public class ControladorSwitch {
 
     @FXML
-    private AnchorPane switchPane; // Contiene todo el contenido del switch, incluyendo el Rectangle y los Circles
+    private AnchorPane switchPane;
 
     @FXML
     private Pane mainPane; // Asegúrate de que el fx:id de tu Pane en el archivo FXML coincida
