@@ -1,5 +1,6 @@
 package com.example.proyectodeprogramacion;
 
+import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -47,8 +48,7 @@ public class ControladorProtoboard {
 
         // Habilitar eliminación con clic derecho para la protoboard
         EliminarElementos.habilitarEliminacion(PantallaProtoboard);
-        // elementoLed = new ControladorLed();
-        // elementoSwitch = VariablesGlobales.controladorSwitch;
+        
         // Agregar botones a busSuperior
         agregarBotonesGridPane(busSuperior, "busSuperior");
 
@@ -67,6 +67,15 @@ public class ControladorProtoboard {
 
         cableManager = new Cables(busSuperior, pistaSuperior, busInferior, pistaInferior);
         VariablesGlobales.cables = cableManager;
+
+        //Verifica cambios en tiempo real
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                cableManager.actualizarCorrienteTodos();
+            }
+        };
+        timer.start();
     }
 
     // Método que recorre un GridPane y añade botones en cada celda
@@ -81,10 +90,8 @@ public class ControladorProtoboard {
                 button.setMaxSize(15, 15);
                 button.setStyle("-fx-background-radius: 30;");
 
-                // Asignar un ID basado en la posición
-                // button + tipo + row + col + carga + cableConectado
-                button.setId("Button -" + tipo + "-" + row + "-" + col + "-0-desconectado"); // carga "0 y no" por
-                                                                                             // defecto
+                // Asignar un ID basado en la posición button + tipo + row + col + carga + cableConectado
+                button.setId("Button -" + tipo + "-" + row + "-" + col + "-0-desconectado"); // carga "0 y no" por defecto
 
                 // manejamos el clic a la protoboard
                 button.setOnAction(event -> {
@@ -138,22 +145,6 @@ public class ControladorProtoboard {
     private void handleMouseDragged(MouseEvent event) {
         PantallaProtoboard.setLayoutX(event.getSceneX() - offsetX);
         PantallaProtoboard.setLayoutY(event.getSceneY() - offsetY);
-    }
-
-    // Método para verificar si el circuito está cerrado
-    public void verificarCircuitoCerrado() {
-        System.out.println("Corriente led es: " + VariablesGlobales.corrienteLed);
-        System.out.println("Corriente Switch es: " + VariablesGlobales.corrienteSwitch);
-        if (VariablesGlobales.corrienteSwitch && VariablesGlobales.corrienteLed) {
-            System.out.println("El circuito está cerrado correctamente.");
-            // aqui cambiar color
-            VariablesGlobales.elementoLed.cambiarColor("yellow");
-            mostrarVentanaMensaje("El CIRCUITO fue correctamente conectado", "Circuito cerrado");
-        } else if (VariablesGlobales.corrienteSwitch && !VariablesGlobales.corrienteLed) {
-            mostrarVentanaMensaje("SWITCH recibe corriente pero LED NO esta recibiendo corriente", "ERROR");
-        } else if (VariablesGlobales.corrienteLed && !VariablesGlobales.corrienteSwitch) {
-            mostrarVentanaMensaje("LED recibe corriente pero SWITCH NO esta recibiendo corriente", "ERROR");
-        }
     }
 
     // Método para mostrar una ventana de mensaje
