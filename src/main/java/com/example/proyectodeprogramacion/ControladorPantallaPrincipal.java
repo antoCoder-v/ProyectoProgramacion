@@ -49,7 +49,4 @@ public class ControladorPantallaPrincipal {
         }
     }
 
-    private void verConexion() {
-        VariablesGlobales.controladorProtoboard.verificarCircuitoCerrado();
-    }
 }
