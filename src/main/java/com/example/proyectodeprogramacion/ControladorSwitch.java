@@ -31,7 +31,6 @@ public class ControladorSwitch {
 
     private double offsetX,offsetY;
     private ControladorProtoboard protoboard;
-    private boolean pasoCorrienteSwitch = false;
     private String corriente = "0";
     private String tipoGridPane = "";
     private Button botonDerecho;
@@ -73,7 +72,6 @@ public class ControladorSwitch {
 
     // Método para verificar si el switch esta recibiendo corriente en algunos de sus botones izquierdos
     public void verificarPosicion(ControladorProtoboard protoboard) {
-        pasoCorrienteSwitch = false; 
 
         if (protoboard == null) {
             System.out.println("Protoboard no está asignado.");

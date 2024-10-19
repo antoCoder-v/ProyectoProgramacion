@@ -19,13 +19,33 @@ public class ControladorBateria {
 
     //variables para almacenar la posición del mouse
     private double offsetX,offsetY;
+    private boolean pasoCorriente = true;
+    private Cables cableManager;
 
     @FXML
     public void initialize() {
+        VariablesGlobales.aparecioBateria = true;
         EliminarElementos.habilitarEliminacion(paneBateria);
+        cableManager = VariablesGlobales.cables;
+
         //Manejamos los movimientos del mouse en el paneBateria
         paneBateria.setOnMousePressed(this::handleMousePressed);
         paneBateria.setOnMouseDragged(this::handleMouseDragged);
+
+        corrriente.setOnAction(event -> {
+            pasoCorriente = !pasoCorriente; // Cambia el paso de corriente
+            //Identificamos el apagar y encerde corriente
+            if(!pasoCorriente){
+                VariablesGlobales.corrienteBateria = false;
+                cableManager.LogicaBateria();
+                
+            }else{
+                VariablesGlobales.corrienteBateria = true;
+                cableManager.LogicaBateria();
+            }
+            //actualizar cargas
+            cableManager.actualizarCorrienteTodos();
+        });
 
     }
 
