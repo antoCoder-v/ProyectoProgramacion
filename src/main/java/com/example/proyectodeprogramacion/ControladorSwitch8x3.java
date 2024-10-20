@@ -23,12 +23,16 @@ public class ControladorSwitch8x3 {
     private Rectangle patInf1, patInf2, patInf3, patInf4, patInf5, patInf6, patInf7, patInf8;
 
     private ControladorProtoboard protoboard;
-    private ManejoCables cables;
+    private Cables cables;
 
     private String corriente = "0";
     private boolean hayCorriente = false;
     private boolean pasoCorrienteSwitch = false;
     private Integer colPatSup1;
+
+    // Variables para manejar el arrastre del switch
+    private double mouseXOffset;
+    private double mouseYOffset;
 
     @FXML
     public void initialize() {
@@ -207,35 +211,28 @@ public class ControladorSwitch8x3 {
         }
     }
 
-    public void cambiarParteIdBoton(Button button, int index, String nuevoValor) {
-        try {
-            String buttonId = button.getId();
-            if (buttonId.equals("botonCargaNegativa") || buttonId.equals("botonCargaPositiva")) {
-                return;
-            }
-            String[] parts = buttonId.split("-");
-            parts[index] = nuevoValor;
-            String newId = String.join("-", parts);
-            button.setId(newId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void cambiarParteIdBoton(Button button, int parte, String nuevoValor) {
+        String id = button.getId();
+        String[] partes = id.split("-");
+        partes[parte] = nuevoValor;
+        button.setId(String.join("-", partes));
     }
 
-    public String retornaUnValorDeID(Button button, int index) {
-        String buttonId = button.getId();
-        String[] parts = buttonId.split("-");
-        return parts[index];
+    public String retornaUnValorDeID(Button button, int parte) {
+        String id = button.getId();
+        String[] partes = id.split("-");
+        return partes[parte];
     }
 
-    private void handleMousePressed(javafx.scene.input.MouseEvent mouseEvent) {
-        paneSwitch8x3.toFront();
+    // Manejo del arrastre con correcciones
+    private void handleMousePressed(javafx.scene.input.MouseEvent event) {
+        mouseXOffset = event.getSceneX() - paneSwitch8x3.getTranslateX();
+        mouseYOffset = event.getSceneY() - paneSwitch8x3.getTranslateY();
     }
 
-    private void handleMouseDragged(javafx.scene.input.MouseEvent mouseEvent) {
-        paneSwitch8x3.setLayoutX(mouseEvent.getSceneX() - paneSwitch8x3.getPrefWidth() / 2);
-        paneSwitch8x3.setLayoutY(mouseEvent.getSceneY() - paneSwitch8x3.getPrefHeight() / 2);
+    private void handleMouseDragged(javafx.scene.input.MouseEvent event) {
+        paneSwitch8x3.setTranslateX(event.getSceneX() - mouseXOffset);
+        paneSwitch8x3.setTranslateY(event.getSceneY() - mouseYOffset);
     }
 }
-
 
