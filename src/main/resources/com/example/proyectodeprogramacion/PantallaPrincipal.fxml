@@ -6,32 +6,27 @@
 
 <AnchorPane fx:id="pantallaPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.proyectodeprogramacion.ControladorPantallaPrincipal">
     <children>
-        <Button fx:id="botonAgregaBateria" layoutX="14.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Bateria">
+        <Button fx:id="botonAgregaBateria" layoutX="6.0" layoutY="14.0" mnemonicParsing="false" text="Agregar Bateria">
             <font>
                 <Font name="Comic Sans MS" size="12.0" />
             </font>
         </Button>
-        <Button fx:id="mostrarSwitch" layoutX="128.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Switch">
+        <Button fx:id="mostrarLed" layoutX="117.0" layoutY="14.0" mnemonicParsing="false" text="Agregar Led">
             <font>
                 <Font name="Comic Sans MS" size="12.0" />
             </font>
         </Button>
-        <Button fx:id="mostrarLed" layoutX="238.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Led">
+        <Button fx:id="agregarProtoboard" layoutX="210.0" layoutY="14.0" mnemonicParsing="false" text="Agregar Protoboard">
             <font>
                 <Font name="Comic Sans MS" size="12.0" />
             </font>
         </Button>
-        <Button fx:id="agregarProtoboard" layoutX="331.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Protoboard">
-            <font>
-                <Font name="Comic Sans MS" size="12.0" />
-            </font>
-        </Button>
-      <Button fx:id="agregaResistencia" layoutX="469.0" layoutY="31.0" mnemonicParsing="false" text="Agregar Resistencia">
+      <Button fx:id="agregaResistencia" layoutX="346.0" layoutY="14.0" mnemonicParsing="false" text="Agregar Resistencia">
          <font>
             <Font name="Comic Sans MS" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="botonSwitch3X3" layoutX="14.0" layoutY="67.0" mnemonicParsing="false" text="Agregar Switch 3x3" />
-      <Button fx:id="botonSwitch8x3" layoutX="144.0" layoutY="67.0" mnemonicParsing="false" text="Agregar Switch 8x3" />
+      <Button fx:id="botonSwitch3X3" layoutX="480.0" layoutY="15.0" mnemonicParsing="false" text="Agregar Switch 3x3" />
+      <Button fx:id="botonSwitch8x3" layoutX="6.0" layoutY="46.0" mnemonicParsing="false" text="Agregar Switch 8x3" />
     </children>
 </AnchorPane>
