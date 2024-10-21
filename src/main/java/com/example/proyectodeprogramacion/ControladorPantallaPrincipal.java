@@ -1,5 +1,8 @@
 package com.example.proyectodeprogramacion;
 
+// Java version: 20
+// IDE: IntelliJ IDEA 2022.1
+
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,12 +28,10 @@ public class ControladorPantallaPrincipal {
 
         botonAgregaBateria.setOnAction(event -> cargarInterfacezElementos("motor.fxml"));
         mostrarLed.setOnAction(event -> cargarInterfacezElementos("led.fxml"));
-        mostrarSwitch.setOnAction(event -> cargarInterfacezElementos("switch.fxml"));
         agregarProtoboard.setOnAction(event -> cargarInterfacezElementos("protoboard.fxml"));
         botonSwitch3X3.setOnAction(event -> cargarInterfacezElementos("Switch3X3.fxml"));
         botonSwitch8x3.setOnAction(event -> cargarInterfacezElementos("Switch8x3.fxml"));
         agregaResistencia.setOnAction(event -> cargarInterfacezElementos("resistencia.fxml"));
-        // verCircuito.setOnAction(actionEvent -> verConexion());
 
     }
 
@@ -49,7 +50,4 @@ public class ControladorPantallaPrincipal {
         }
     }
 
-    private void verConexion() {
-        VariablesGlobales.controladorProtoboard.verificarCircuitoCerrado();
-    }
 }
