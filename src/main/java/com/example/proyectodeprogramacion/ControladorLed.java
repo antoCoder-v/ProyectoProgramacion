@@ -3,6 +3,7 @@ package com.example.proyectodeprogramacion;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
+import javafx.animation.AnimationTimer;
 import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.MouseEvent;
@@ -49,8 +50,6 @@ public class ControladorLed {
         //verifica si led recibe corriente positiva y negativa, al moverlo
         ledPane.setOnMouseDragged(this::onMouseDragged);
         ledPane.setOnMouseReleased(this::onMouseReleased);
-
-
     }
 
     // Método para cambiar el color del LED
@@ -101,7 +100,6 @@ public class ControladorLed {
             AudioClip explosionSound = new AudioClip(getClass().getResource("/Audio/explosion.wav").toExternalForm());
             explosionSound.play();
             mostrarVentanaMensaje("EL LED SE HA SOBRECALENTADO HASTA EXPLOTAR", "ERROR DE EXPLOSION");
-            System.out.println("El LED ha explotado porque una patita está conectada a corriente positiva.");
             cambiarColor("red");
         } else if (!patita1Conectada && corrienteNeutra!=0 && patita2Conectada) {
             cambiarColor("yellow");

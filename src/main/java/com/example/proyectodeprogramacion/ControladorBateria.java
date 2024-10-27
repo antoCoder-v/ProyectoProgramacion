@@ -53,20 +53,14 @@ public class ControladorBateria {
     public void botonCargaNegativa(ActionEvent event) {
         VariablesGlobales.aparecioBateria = true;
         VariablesGlobales.botonPresionadoBateria = botonCargaNegativa;
-
         botonCargaNegativa.setStyle("-fx-background-color: red;");
-        //botonCargaNegativa.setId("Button -bateria-x-x-negativa");
-        System.out.println("Boton presionado"+ botonCargaNegativa.getId());
     }
 
     @FXML
     public void botonCargaPositiva(ActionEvent event) {
         VariablesGlobales.aparecioBateria = true;
         VariablesGlobales.botonPresionadoBateria = botonCargaPositiva;
-
         botonCargaPositiva.setStyle("-fx-background-color: green;");
-        //botonCargaPositiva.setId("Button -bateria-x-x-positiva");
-        System.out.println("Boton presionado "+ botonCargaNegativa.getId());
     }
 
     private void handleMousePressed(MouseEvent event) {
