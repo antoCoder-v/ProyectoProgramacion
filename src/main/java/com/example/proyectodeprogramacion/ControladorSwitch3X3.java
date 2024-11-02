@@ -39,8 +39,8 @@ public class ControladorSwitch3X3 {
         protoboard = VariablesGlobales.controladorProtoboard;
         cables = VariablesGlobales.cables;
 
-        //Borramos switch con clic derecho
-        EliminarElementos.habilitarEliminacion(switchPane);
+        // Borramos switch con clic derecho
+        // EliminarElementos.habilitarEliminacion(switchPane);
 
         // Configura los eventos cuando se presiona el Switch
         switchPane.setOnMousePressed(this::handleMousePressed);
@@ -48,13 +48,14 @@ public class ControladorSwitch3X3 {
         // Configura los eventos cuando se arrastra el Switch y si recibe corriente
         switchPane.setOnMouseDragged(this::handleMouseDragged);
 
-        // Configura el evento al presionar el botón "Encender", al presionar se activa el paso de corriente
+        // Configura el evento al presionar el botón "Encender", al presionar se activa
+        // el paso de corriente
         encender.setOnAction(event -> {
             pasoCorrienteSwitch = !pasoCorrienteSwitch; // Cambia el paso de corriente
-            
-            pasoDeCorriente("pistaInferior"); //linea que ACTUALIZA la corriente en switch cuando se prende y se apaga
-            
-            //linea que ACTUALIZA la corriente en switch cuando se prende y se apaga
+
+            pasoDeCorriente("pistaInferior"); // linea que ACTUALIZA la corriente en switch cuando se prende y se apaga
+
+            // linea que ACTUALIZA la corriente en switch cuando se prende y se apaga
             cables.actualizarCorrienteTodos();
         });
 
@@ -75,7 +76,8 @@ public class ControladorSwitch3X3 {
         offsetY = event.getSceneY() - switchPane.getLayoutY();
     }
 
-    // Funcion para manejar cuando se arrastra el switch y verifica si recibe corriente
+    // Funcion para manejar cuando se arrastra el switch y verifica si recibe
+    // corriente
     private void handleMouseDragged(MouseEvent event) {
         switchPane.setLayoutX(event.getSceneX() - offsetX);
         switchPane.setLayoutY(event.getSceneY() - offsetY);
@@ -83,14 +85,14 @@ public class ControladorSwitch3X3 {
 
     // Metodo que verifica si el cirle esta recibiendo corriente
     private void verificarEnGridPaneCorriente() {
-        GridPane[] gridPanes = {protoboard.getPistaSuperior(), protoboard.getPistaInferior()};
+        GridPane[] gridPanes = { protoboard.getPistaSuperior(), protoboard.getPistaInferior() };
 
         for (GridPane gridPane : gridPanes) {
             for (Node node : gridPane.getChildren()) {
                 Button button = (Button) node;
                 String tipo = retornaUnValorDeID(button, 1);
                 Integer nodeCol = GridPane.getColumnIndex(node);
-                
+
                 // Posicion de los circulos
                 Bounds circle1Bounds = circle1.localToScene(circle1.getBoundsInLocal());
                 Bounds circle2Bounds = circle2.localToScene(circle2.getBoundsInLocal());
@@ -110,15 +112,15 @@ public class ControladorSwitch3X3 {
                         circle2.setFill(Color.RED);
                         corriente = "negativa";
                         hayCorriente = true;
-                    } else if(carga.equals("0")){
+                    } else if (carga.equals("0")) {
                         circle1.setFill(Color.BLACK);
                         circle2.setFill(Color.BLACK);
                         corriente = "0";
                         hayCorriente = false;
                     }
                     corrienteVecina(nodeCol, nodeCol + 2, tipo);
-                    //corrienteVecina(circle2);
-                }else if (circle1.getFill().equals(Color.BLACK)) { // ----> Verificamos si el circle2 recibe corriente
+                    // corrienteVecina(circle2);
+                } else if (circle1.getFill().equals(Color.BLACK)) { // ----> Verificamos si el circle2 recibe corriente
                     if (circle2Bounds.intersects(buttonBounds)) {
                         if (carga.equals("positiva")) { // si la carga es positiva
                             circle1.setFill(Color.GREEN);
@@ -137,7 +139,7 @@ public class ControladorSwitch3X3 {
                             hayCorriente = false;
                         }
                         corrienteVecina(nodeCol, nodeCol - 2, tipo);
-                        //corrienteVecina(circle1);
+                        // corrienteVecina(circle1);
                     }
                 }
             }
@@ -146,49 +148,51 @@ public class ControladorSwitch3X3 {
 
     // Manejamos la corriente del circleVecino (circle1 o circle2)
     private void corrienteVecina(int col1, int col2, String tipo) {
-        GridPane gridPane = tipo.contains("pistaSuperior") ? protoboard.getPistaSuperior(): protoboard.getPistaInferior();
+        GridPane gridPane = tipo.contains("pistaSuperior") ? protoboard.getPistaSuperior()
+                : protoboard.getPistaInferior();
         for (Node node : gridPane.getChildren()) {
             Integer nodeCol = GridPane.getColumnIndex(node);
-            if(nodeCol.equals(col1) || nodeCol.equals(col2)){
-                if(corriente.equals("positiva")){
+            if (nodeCol.equals(col1) || nodeCol.equals(col2)) {
+                if (corriente.equals("positiva")) {
                     node.setStyle("-fx-background-color: green; -fx-background-radius: 30;");
                     circle3.setFill(Color.GREEN);
                     circle4.setFill(Color.GREEN);
                     pasoDeCorriente("pistaInferior");
-                }else if(corriente.equals("negativa")){
+                } else if (corriente.equals("negativa")) {
                     node.setStyle("-fx-background-color: red; -fx-background-radius: 30;");
                     circle3.setFill(Color.RED);
                     circle4.setFill(Color.RED);
                     pasoDeCorriente("pistaInferior");
-                }else{
+                } else {
                     node.setStyle("-fx-background-radius: 30;");
                     circle3.setFill(Color.BLACK);
                     circle4.setFill(Color.BLACK);
                     pasoDeCorriente("pistaInferior");
                 }
-                cambiarParteIdBoton((Button)node, 4, corriente);
+                cambiarParteIdBoton((Button) node, 4, corriente);
             }
         }
     }
 
     // manejamos el traspaso de corriente al presionar el boton del switch
     private void pasoDeCorriente(String tipo) {
-        GridPane gridPane = tipo.contains("pistaSuperior") ? protoboard.getPistaSuperior(): protoboard.getPistaInferior();
+        GridPane gridPane = tipo.contains("pistaSuperior") ? protoboard.getPistaSuperior()
+                : protoboard.getPistaInferior();
         for (Node node : gridPane.getChildren()) {
             Integer nodeCol = GridPane.getColumnIndex(node);
-            if(nodeCol.equals(colCircle1) || nodeCol.equals(colCircle1 + 2)){
-                if(pasoCorrienteSwitch && !circle3.getFill().equals(Color.BLACK)){
-                    if(corriente.equals("positiva") && circle3.getFill().equals(Color.GREEN)){
+            if (nodeCol.equals(colCircle1) || nodeCol.equals(colCircle1 + 2)) {
+                if (pasoCorrienteSwitch && !circle3.getFill().equals(Color.BLACK)) {
+                    if (corriente.equals("positiva") && circle3.getFill().equals(Color.GREEN)) {
                         node.setStyle("-fx-background-color: green; -fx-background-radius: 30;");
-                        cambiarParteIdBoton((Button)node, 4, corriente);
-                    }else if(corriente.equals("negativa") && circle3.getFill().equals(Color.RED)){
+                        cambiarParteIdBoton((Button) node, 4, corriente);
+                    } else if (corriente.equals("negativa") && circle3.getFill().equals(Color.RED)) {
                         node.setStyle("-fx-background-color: red; -fx-background-radius: 30;");
-                        cambiarParteIdBoton((Button)node, 4, corriente);
+                        cambiarParteIdBoton((Button) node, 4, corriente);
                     }
-                    
-                }else{
+
+                } else {
                     node.setStyle("-fx-background-radius: 30;");
-                    cambiarParteIdBoton((Button)node, 4, "0");
+                    cambiarParteIdBoton((Button) node, 4, "0");
 
                 }
             }

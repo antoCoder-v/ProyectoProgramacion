@@ -47,8 +47,8 @@ public class ControladorProtoboard {
         VariablesGlobales.controladorProtoboard = this;
 
         // Habilitar eliminación con clic derecho para la protoboard
-        EliminarElementos.habilitarEliminacion(PantallaProtoboard);
-        
+        // EliminarElementos.habilitarEliminacion(PantallaProtoboard);
+
         // Agregar botones a busSuperior
         agregarBotonesGridPane(busSuperior, "busSuperior");
 
@@ -68,7 +68,7 @@ public class ControladorProtoboard {
         cableManager = new Cables(busSuperior, pistaSuperior, busInferior, pistaInferior);
         VariablesGlobales.cables = cableManager;
 
-        //Verifica cambios en tiempo real
+        // Verifica cambios en tiempo real
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -90,8 +90,10 @@ public class ControladorProtoboard {
                 button.setMaxSize(15, 15);
                 button.setStyle("-fx-background-radius: 30;");
 
-                // Asignar un ID basado en la posición button + tipo + row + col + carga + cableConectado
-                button.setId("Button -" + tipo + "-" + row + "-" + col + "-0-desconectado"); // carga "0 y no" por defecto
+                // Asignar un ID basado en la posición button + tipo + row + col + carga +
+                // cableConectado
+                button.setId("Button -" + tipo + "-" + row + "-" + col + "-0-desconectado"); // carga "0 y no" por
+                                                                                             // defecto
 
                 // manejamos el clic a la protoboard
                 button.setOnAction(event -> {

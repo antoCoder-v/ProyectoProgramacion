@@ -21,12 +21,25 @@
                 <Font name="Comic Sans MS" size="12.0" />
             </font>
         </Button>
-      <Button fx:id="agregaResistencia" layoutX="346.0" layoutY="14.0" mnemonicParsing="false" text="Agregar Resistencia">
-         <font>
-            <Font name="Comic Sans MS" size="12.0" />
-         </font>
-      </Button>
-      <Button fx:id="botonSwitch3X3" layoutX="480.0" layoutY="15.0" mnemonicParsing="false" text="Agregar Switch 3x3" />
-      <Button fx:id="botonSwitch8x3" layoutX="6.0" layoutY="46.0" mnemonicParsing="false" text="Agregar Switch 8x3" />
+        <Button fx:id="agregaResistencia" layoutX="346.0" layoutY="14.0" mnemonicParsing="false" text="Agregar Resistencia">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Button>
+        <Button fx:id="botonSwitch3X3" layoutX="480.0" layoutY="15.0" mnemonicParsing="false" text="Agregar Switch 3x3">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Button>
+        <Button fx:id="botonSwitch8x3" layoutX="6.0" layoutY="46.0" mnemonicParsing="false" text="Agregar Switch 8x3">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Button>
+        <Button fx:id="botonChip" layoutX="117.0" layoutY="46.0" mnemonicParsing="false" text="Agregar Chip">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Button>
     </children>
 </AnchorPane>
