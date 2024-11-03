@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Circle;
 import javafx.scene.input.MouseEvent;
@@ -14,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.control.MenuItem;
 
 public class ControladorLed implements ControladorElemento {
 
@@ -34,6 +36,7 @@ public class ControladorLed implements ControladorElemento {
     private boolean encimaDeProtoboard = false; // maneja si el led esta encima de la protoboard (requisito para
                                                 // concectar)
     private boolean ledExploto = false;
+    //private ContextMenu colorMenu;
 
     // Metodos para modificar ledConectado (IMPORTANTE que las funciones esten en la
     // interfaz ControladorElemento)
@@ -60,6 +63,7 @@ public class ControladorLed implements ControladorElemento {
 
         // Manejamos eliminacion del elemento y la conceccion
         EliminarElementos.habilitarEliminacion(ledPane, this);
+        // Inicializar el menú de colores
 
         // Inicialización de las patitas (puedes personalizar los estilos o
         // comportamientos)
@@ -97,7 +101,6 @@ public class ControladorLed implements ControladorElemento {
                 }
             }
         };
-
         timer.start();
 
         System.out.println("led exploto " + ledExploto);
@@ -109,6 +112,27 @@ public class ControladorLed implements ControladorElemento {
         }
 
     }
+
+    // Método para configurar el menú de colores
+    public void cambiarColor() {
+        ContextMenu colorMenu = new ContextMenu();
+
+        MenuItem morado = new MenuItem("Morado");
+        morado.setOnAction(e -> cambiarColor("PURPLE"));
+
+        MenuItem celeste = new MenuItem("Celeste");
+        celeste.setOnAction(e -> cambiarColor("LIGHTBLUE"));
+
+        MenuItem rosado = new MenuItem("Rosado");
+        rosado.setOnAction(e -> cambiarColor("PINK"));
+
+        MenuItem naranjo = new MenuItem("Naranjo");
+        naranjo.setOnAction(e -> cambiarColor("ORANGE"));
+
+        colorMenu.getItems().addAll(morado, celeste, rosado, naranjo);
+        colorMenu.show(ledPane, ledPane.getLayoutX(), ledPane.getLayoutY());
+    }
+
 
     // Método para cambiar el color del LED
     public void cambiarColor(String color) {
@@ -227,5 +251,4 @@ public class ControladorLed implements ControladorElemento {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 }

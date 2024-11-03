@@ -28,18 +28,23 @@ public class EliminarElementos {
 
     // Manejar el clic derecho para eliminar el nodo
     private static void handleRightClick(MouseEvent event, Node elemento, ControladorElemento clase) {
-
         if (event.getButton() == MouseButton.SECONDARY) { // Si es clic derecho
             ContextMenu contextMenu = new ContextMenu();
             MenuItem deleteItem = new MenuItem("Eliminar");
             MenuItem conectarItem = new MenuItem("Conectar");
             MenuItem desconectarItem = new MenuItem("Desconectar");
+            MenuItem cambiarColorItem = new MenuItem("Cambiar Color");
 
             // Alternar las opciones del menú según el estado del nodo
-            if (clase.isConectado()) { // --->Verificamos si el elemento esta conectado
+            if (clase.isConectado()) { // Verificamos si el elemento está conectado
                 contextMenu.getItems().add(desconectarItem);
-            } else if (clase.EncimaDeProtoboard()) { // --->solo se conecta si el elemento esta encima de la protoboard
+            } else if (clase.EncimaDeProtoboard()) { // Solo se conecta si el elemento está encima de la protoboard
                 contextMenu.getItems().add(conectarItem);
+            }
+
+            // Solo agregar la opción "Cambiar Color" si el elemento es un LED
+            if (clase instanceof ControladorLed) {
+                contextMenu.getItems().add(cambiarColorItem);
             }
 
             // Manejar el evento de eliminar
@@ -52,20 +57,29 @@ public class EliminarElementos {
 
             // Manejar el evento de conectar
             conectarItem.setOnAction(e -> {
-                // elemento.getProperties().put("conectado", true);
                 System.out.println("Elemento conectado");
                 clase.setConectado(true);
             });
 
+            // Manejar el evento de cambiar color
+            cambiarColorItem.setOnAction(e -> {
+                if (clase instanceof ControladorLed) {
+                    ((ControladorLed) clase).cambiarColor(); // Llama al método cambiarColor de la clase del LED
+                }
+            });
+
             // Manejar el evento de desconectar
             desconectarItem.setOnAction(e -> {
-                // elemento.getProperties().put("conectado", false);
                 System.out.println("Elemento desconectado");
                 clase.setConectado(false);
             });
 
+            // Agregar siempre el item de eliminar al menú
             contextMenu.getItems().add(deleteItem);
+
+            // Mostrar el menú contextual
             contextMenu.show(elemento, event.getScreenX(), event.getScreenY());
         }
     }
+
 }
