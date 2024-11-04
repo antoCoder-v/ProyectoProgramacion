@@ -17,33 +17,33 @@ public class ControladorBateria {
     @FXML
     private Button corrriente;
 
-    //variables para almacenar la posición del mouse
-    private double offsetX,offsetY;
+    // variables para almacenar la posición del mouse
+    private double offsetX, offsetY;
     private boolean pasoCorriente = true;
     private Cables cableManager;
 
     @FXML
     public void initialize() {
         VariablesGlobales.aparecioBateria = true;
-        EliminarElementos.habilitarEliminacion(paneBateria);
+        // EliminarElementos.habilitarEliminacion(paneBateria);
         cableManager = VariablesGlobales.cables;
 
-        //Manejamos los movimientos del mouse en el paneBateria
+        // Manejamos los movimientos del mouse en el paneBateria
         paneBateria.setOnMousePressed(this::handleMousePressed);
         paneBateria.setOnMouseDragged(this::handleMouseDragged);
 
         corrriente.setOnAction(event -> {
             pasoCorriente = !pasoCorriente; // Cambia el paso de corriente
-            //Identificamos el apagar y encerde corriente
-            if(!pasoCorriente){
+            // Identificamos el apagar y encerde corriente
+            if (!pasoCorriente) {
                 VariablesGlobales.corrienteBateria = false;
                 cableManager.LogicaBateria();
-                
-            }else{
+
+            } else {
                 VariablesGlobales.corrienteBateria = true;
                 cableManager.LogicaBateria();
             }
-            //actualizar cargas
+            // actualizar cargas
             cableManager.actualizarCorrienteTodos();
         });
 
@@ -53,20 +53,14 @@ public class ControladorBateria {
     public void botonCargaNegativa(ActionEvent event) {
         VariablesGlobales.aparecioBateria = true;
         VariablesGlobales.botonPresionadoBateria = botonCargaNegativa;
-
         botonCargaNegativa.setStyle("-fx-background-color: red;");
-        //botonCargaNegativa.setId("Button -bateria-x-x-negativa");
-        System.out.println("Boton presionado"+ botonCargaNegativa.getId());
     }
 
     @FXML
     public void botonCargaPositiva(ActionEvent event) {
         VariablesGlobales.aparecioBateria = true;
         VariablesGlobales.botonPresionadoBateria = botonCargaPositiva;
-
         botonCargaPositiva.setStyle("-fx-background-color: green;");
-        //botonCargaPositiva.setId("Button -bateria-x-x-positiva");
-        System.out.println("Boton presionado "+ botonCargaNegativa.getId());
     }
 
     private void handleMousePressed(MouseEvent event) {
