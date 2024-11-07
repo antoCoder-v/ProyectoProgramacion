@@ -1,7 +1,6 @@
 package com.example.proyectodeprogramacion;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
@@ -32,27 +31,18 @@ public class ControladorLed implements ControladorElemento {
     public boolean pasoCorrienteLed = false;
     private ControladorProtoboard protoboard;
 
-    private boolean ledConectado = false; // maneja la coneccion de led con protoboard
-    private boolean encimaDeProtoboard = false; // maneja si el led esta encima de la protoboard (requisito para
+    //private boolean ledConectado = false; // maneja la coneccion de led con protoboard
+    //private boolean encimaDeProtoboard = false; // maneja si el led esta encima de la protoboard (requisito para
                                                 // concectar)
     private boolean ledExploto = false;
+    private String color = "rojo";
     //private ContextMenu colorMenu;
 
     // Metodos para modificar ledConectado (IMPORTANTE que las funciones esten en la
     // interfaz ControladorElemento)
     @Override
-    public void setConectado(boolean conectado) {
-        this.ledConectado = conectado;
-    }
-
-    @Override
-    public boolean isConectado() {
-        return this.ledConectado;
-    }
-
-    @Override
-    public boolean EncimaDeProtoboard() {
-        return this.encimaDeProtoboard;
+    public void setColor(String color) {
+        this.color = color;
     }
 
     // Inicialización del controlador
@@ -80,41 +70,18 @@ public class ControladorLed implements ControladorElemento {
             @Override
             public void handle(long now) {
                 // Variable para habilitar opciones
-                encimaDeProtoboard = estaEncimaDeProtoboard();
-
-                // Led se prende solo si esta conectada a protoboard(Nos ayuda para que no
-                // explote cada vex que lo movemos)
-                if (estaEncimaDeProtoboard() && ledConectado) {
-                    // Verifica si led explota
-                    if (!verificarCorrienteLED()) {
-                        ledExploto = true;
-                        stop();
-
-                        // Nos muestra la explocion del led
-                        Platform.runLater(() -> {
-                            AudioClip explosionSound = new AudioClip(
-                                    getClass().getResource("/Audio/explosion.wav").toExternalForm());
-                            explosionSound.play();
-                            mostrarVentanaMensaje("EL LED SE HA QUEMADO", "ERROR DE EXPLOSION");
-                        });
-                    }
-                }
+                estaEncimaDeProtoboard();
+                verificarCorrienteLED();
+                
             }
         };
         timer.start();
-
-        System.out.println("led exploto " + ledExploto);
-
-        if (ledExploto) {
-            AudioClip explosionSound = new AudioClip(getClass().getResource("/Audio/explosion.wav").toExternalForm());
-            explosionSound.play();
-            mostrarVentanaMensaje("EL LED SE HA QUEMADO", "ERROR DE EXPLOSION");
-        }
+        System.out.println(color);
 
     }
 
     // Método para configurar el menú de colores
-    public void cambiarColor() {
+    public void actualizarColor() {
         ContextMenu colorMenu = new ContextMenu();
 
         MenuItem morado = new MenuItem("Morado");
@@ -131,6 +98,7 @@ public class ControladorLed implements ControladorElemento {
 
         colorMenu.getItems().addAll(morado, celeste, rosado, naranjo);
         colorMenu.show(ledPane, ledPane.getLayoutX(), ledPane.getLayoutY());
+        //return colorMenu;
     }
 
 
@@ -143,29 +111,23 @@ public class ControladorLed implements ControladorElemento {
     // Método para capturar el punto inicial de arrastre (SOLO se mueve si led no
     // esta conectado)
     private void onMousePressed(MouseEvent event) {
-        if (!ledConectado) {
-            offsetX = event.getSceneX() - ledPane.getLayoutX();
-            offsetY = event.getSceneY() - ledPane.getLayoutY();
-        }
-
+        offsetX = event.getSceneX() - ledPane.getLayoutX();
+        offsetY = event.getSceneY() - ledPane.getLayoutY();
     }
 
     // Método para mover el LED mientras se arrastra (SOLO se mueve si led no esta
     // conectado)
     private void onMouseDragged(MouseEvent event) {
-        if (!ledConectado) {
-            ledPane.setLayoutX(event.getSceneX() - offsetX);
-            ledPane.setLayoutY(event.getSceneY() - offsetY);
-        }
-
+        ledPane.setLayoutX(event.getSceneX() - offsetX);
+        ledPane.setLayoutY(event.getSceneY() - offsetY);
     }
 
     // Metodo para verificar si led esta sobre los botones de protoboard
-    public boolean estaEncimaDeProtoboard() {
+    public void estaEncimaDeProtoboard() {
         // Verificamos que haya una protoboard
         if (protoboard == null) {
             // System.out.println("Protoboard no está asignado.");
-            return false;
+            return;
         }
 
         // variables para comprobacion
@@ -182,29 +144,22 @@ public class ControladorLed implements ControladorElemento {
                 || verificarPatitasEnGridPane(protoboard.getPistaSuperior(), patita2, "Patita 2")
                 || verificarPatitasEnGridPane(protoboard.getBusInferior(), patita2, "Patita 2")
                 || verificarPatitasEnGridPane(protoboard.getPistaInferior(), patita2, "Patita 2");
-
-        if (patita1Encima && patita2Encima) {
-            // System.out.println("Patitas conectadas");
-            return true;
-        } else {
-            return false;
-        }
-
     }
 
     // Método para verificar si el LED está correctamente colocado y recibiendo
     // corriente
-    public boolean verificarCorrienteLED() {
+    public void verificarCorrienteLED() {
         // Verficamos si recibe la corriente correcta las patitas
         if (patita1.getFill().equals(Color.RED) && patita2.getFill().equals(Color.GREEN)) {
             cambiarColor("yellow");
-            return true;
-        } else if (patita2.getFill().equals(Color.RED) && patita1.getFill().equals(Color.GREEN)) {
+        } else if (patita2.getFill().equals(Color.RED) && patita1.getFill().equals(Color.GREEN) && !ledExploto) {
             cambiarColor("black");
-            return false;
-        } else {
+            AudioClip explosionSound = new AudioClip(getClass().getResource("/Audio/explosion.wav").toExternalForm());
+            explosionSound.play();
+            //mostrarVentanaMensaje("EL LED SE HA QUEMADO", "ERROR DE EXPLOSION");
+            ledExploto = true;
+        } else if(!ledExploto){
             cambiarColor("red");
-            return true;
         }
     }
 
