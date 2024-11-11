@@ -1,9 +1,6 @@
 package com.example.proyectodeprogramacion;
 
 public interface ControladorElemento {
-    public void setConectado(boolean conectado);
+    public void setColor(String color);
 
-    public boolean isConectado();
-
-    public boolean EncimaDeProtoboard();
 }

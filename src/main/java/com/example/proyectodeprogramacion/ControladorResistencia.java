@@ -24,31 +24,20 @@ public class ControladorResistencia implements ControladorElemento {
     // etc.)
     private String tipoGridPane = "";
 
-    private boolean resistenciaConectada = false, encimaDeProtoboard = false; // --->Variables importantes para manejar
-                                                                              // la conceccion con protoboard
-
-    public ControladorResistencia() {
-    }
+    private boolean resistenciaConectada = false, encimaDeProtoboard = false; // --->Variables importantes para manejar la conceccion con protoboa
+    
+    private boolean resistenciaMoviendose = false;
 
     private double offsetX, offsetY;
 
     // Metodos para modificar ledConectado (IMPORTANTE que las funciones esten en la
     // interfaz ControladorElemento)
-    @Override
-    public void setConectado(boolean conectado) {
-        this.resistenciaConectada = conectado;
-    }
 
     @Override
-    public boolean isConectado() {
-        return this.resistenciaConectada;
+    public void setColor(String color) {
+        //this.color = color;
     }
-
-    @Override
-    public boolean EncimaDeProtoboard() {
-        return this.encimaDeProtoboard;
-    }
-
+   
     @FXML
     public void initialize() {
         protoboard = VariablesGlobales.controladorProtoboard;
@@ -65,32 +54,29 @@ public class ControladorResistencia implements ControladorElemento {
             public void handle(long now) {
                 encimaDeProtoboard = verificarPosicionResistencia(protoboard);
 
-                if (encimaDeProtoboard && resistenciaConectada) {
-                    manejamosPasoCorrienteResistencia();
-                } // else if (encimaDeProtoboard && !resistenciaConectada) {
-                  // manejamosPasoCorrienteResistencia();
-
+                //manejamosPasoCorrienteResistencia();
+                 // else if (encimaDeProtoboard && !resistenciaConectada) {
                 manejamosPasoCorrienteResistencia();
+
+                
             }
         };
         timer.start();
     }
 
-    // Metodos para manejar el movimiento de resistencia (NO SE MUEVE si esta
-    // conectada)
+    // Metodos para manejar el movimiento de resistencia 
     private void handleMousePressed(MouseEvent event) {
-        if (!resistenciaConectada) {
-            offsetX = event.getSceneX() - paneResistencia.getLayoutX();
-            offsetY = event.getSceneY() - paneResistencia.getLayoutY();
-        }
+        offsetX = event.getSceneX() - paneResistencia.getLayoutX();
+        offsetY = event.getSceneY() - paneResistencia.getLayoutY();
+        resistenciaMoviendose = true;
+        //manejamosPasoCorrienteResistencia();
     }
 
     private void handleMouseDragged(MouseEvent event) {
-        if (!resistenciaConectada) {
-            paneResistencia.setLayoutX(event.getSceneX() - offsetX);
-            paneResistencia.setLayoutY(event.getSceneY() - offsetY);
-        }
+        paneResistencia.setLayoutX(event.getSceneX() - offsetX);
+        paneResistencia.setLayoutY(event.getSceneY() - offsetY);
         // aneResistencia.toFront();
+        resistenciaMoviendose = false;
     }
 
     // Método que verifica si alguna de las patitas está recibiendo corriente
@@ -170,21 +156,22 @@ public class ControladorResistencia implements ControladorElemento {
             Integer nodeCol = GridPane.getColumnIndex(node);
             if (nodeCol != null && nodeCol.equals(col) && node instanceof Button) {
                 Button button = (Button) node;
-                if (resistenciaConectada) {
+                if(!resistenciaMoviendose){
                     if (pata2.getFill().equals(Color.GREEN)) {
                         button.setStyle("-fx-background-color: green; -fx-background-radius: 30;");
                         cambiarParteIdBoton(button, 4, corriente);
                     } else if (pata2.getFill().equals(Color.RED)) {
                         button.setStyle("-fx-background-color: red; -fx-background-radius: 30;");
                         cambiarParteIdBoton(button, 4, corriente);
-                    } else {
+                    } else{
                         button.setStyle("fx-background-radius: 30;");
                         cambiarParteIdBoton(button, 4, corriente);
                     }
-                } else {
+                }else {
                     button.setStyle("fx-background-radius: 30;");
                     cambiarParteIdBoton(button, 4, corriente);
                 }
+                
             }
         }
     }
