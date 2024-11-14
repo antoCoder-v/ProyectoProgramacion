@@ -11,7 +11,7 @@ import javafx.scene.Node;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 
-public class ControladorChip {
+public abstract class ControladorChip {
 
     @FXML
     private AnchorPane paneChip;
@@ -82,43 +82,11 @@ public class ControladorChip {
     private void verificarConexionPins() {
         boolean pin7Correcto = verificarColorPin(pin7, Color.RED);
         boolean pin14Correcto = verificarColorPin(pin14, Color.GREEN);
-        boolean pin1Correcto = verificarColorPin(pin1, Color.GREEN);
-        boolean pin2Correcto = verificarColorPin(pin2, Color.GREEN);
-        boolean pin4Correcto = verificarColorPin(pin4, Color.GREEN);
-        boolean pin5Correcto = verificarColorPin(pin5, Color.GREEN);
-        boolean pin9Correcto = verificarColorPin(pin9, Color.GREEN);
-        boolean pin10Correcto = verificarColorPin(pin10, Color.GREEN);
-        boolean pin12Correcto = verificarColorPin(pin12, Color.GREEN);
-        boolean pin13Correcto = verificarColorPin(pin13, Color.GREEN);
 
         if (pin7Correcto && pin14Correcto) {
             System.out.println("Pin7 conectado a tierra y pin14 a corriente CORRECTAMENTE");
         } else {
             System.out.println("Pines 7 y 14 mal conectados");
-        }
-        if(pin1Correcto && pin2Correcto){
-            System.out.println("Compuerta 1 activa.\nSalida pin3: 1");
-        }
-        else{
-            System.out.println("Compuerta 1 activa.\nSalida pin3: 0");
-        }
-        if(pin4Correcto && pin5Correcto){
-            System.out.println("Compuerta 2 activa.\nSalida pin3: 1");
-        }
-        else{
-            System.out.println("Compuerta 2 activa.\nSalida pin3: 0");
-        }
-        if(pin9Correcto && pin10Correcto){
-            System.out.println("Compuerta 3 activa.\nSalida pin3: 1");
-        }
-        else{
-            System.out.println("Compuerta 3 activa.\nSalida pin3: 0");
-        }
-        if(pin2Correcto && pin13Correcto){
-            System.out.println("Compuerta 4 activa.\nSalida pin3: 1");
-        }
-        else{
-            System.out.println("Compuerta 4 activa.\nSalida pin3: 0");
         }
     }
 
@@ -129,6 +97,27 @@ public class ControladorChip {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    public void cargarOperacion(String operacion) {
+        // Lógica para manejar las operaciones AND, OR, NOT
+        switch (operacion) {
+            case "AND":
+                System.out.println("Operación AND seleccionada");
+                break;
+            case "OR":
+                System.out.println("Operación OR seleccionada");
+                break;
+            case "NOT":
+                System.out.println("Operación NOT seleccionada");
+                break;
+            default:
+                System.out.println("Operación no reconocida");
+                break;
+        }
+    }
+
+    // Método abstracto para ejecutar la operación lógica específica
+    protected abstract void ejecutarOperacion();
 }
 
 
