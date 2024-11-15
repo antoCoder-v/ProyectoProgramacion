@@ -10,40 +10,54 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.Node;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public abstract class ControladorChip {
 
     @FXML
     private AnchorPane paneChip;
+
     @FXML
     private Rectangle pin1, pin2, pin3, pin4, pin5, pin6, pin7, pin8, pin9, pin10, pin11, pin12, pin13, pin14;
+
     @FXML
-    private Button botonChip; // Agregar referencia al botón "botonChip" en el FXML
+    private Button botonChip;   // Agregar referencia al botón "botonChip" en el FXML
+
+    @FXML 
+    private Text tipoChip;      //Se vera de manera visual que tipo de chip es
+
     private double offsetX, offsetY;
     private ControladorProtoboard protoboard;
-    public ControladorChip() {}
+
+    // Método para establecer el tipo de chip en la interfaz
+    public void setTipoChip(String tipoChip) {
+        this.tipoChip.setText(tipoChip);
+    }
 
     @FXML
     public void initialize() {
         protoboard = VariablesGlobales.controladorProtoboard;
+
+        //manejo de eventos de arrastre
         paneChip.setOnMousePressed(this::onMousePressed);
         paneChip.setOnMouseDragged(this::onMouseDragged);
 
-
+        //Se ejecuta la subClase que corresponde
+        ejecutarOperacion();
     }
 
-    private void onMousePressed(MouseEvent event) {
+    public void onMousePressed(MouseEvent event) {
         offsetX = event.getSceneX() - paneChip.getLayoutX();
         offsetY = event.getSceneY() - paneChip.getLayoutY();
     }
 
-    private void onMouseDragged(MouseEvent event) {
+    public void onMouseDragged(MouseEvent event) {
         paneChip.setLayoutX(event.getSceneX() - offsetX);
         paneChip.setLayoutY(event.getSceneY() - offsetY);
         verificarConexionPins(); // Verificar las conexiones de los pines 7 y 14 después de mover el chip
     }
 
-    private boolean verificarColorPin(Rectangle pin, Color colorEsperado) {
+    public boolean verificarColorPin(Rectangle pin, Color colorEsperado) {
         GridPane[] gridPanes = { protoboard.getBusSuperior(), protoboard.getPistaSuperior(), protoboard.getPistaInferior() };
         Bounds pinBounds = pin.localToScene(pin.getBoundsInLocal());
 
@@ -64,7 +78,7 @@ public abstract class ControladorChip {
         return false;
     }
 
-    private Color obtenerColorBoton(Button button) {
+    public Color obtenerColorBoton(Button button) {
         String buttonId = button.getId();
         String[] parts = buttonId.split("-");
         String carga = parts.length > 4 ? parts[4].trim() : "";
@@ -79,7 +93,7 @@ public abstract class ControladorChip {
         }
     }
 
-    private void verificarConexionPins() {
+    public void verificarConexionPins() {
         boolean pin7Correcto = verificarColorPin(pin7, Color.RED);
         boolean pin14Correcto = verificarColorPin(pin14, Color.GREEN);
 

@@ -17,7 +17,7 @@ import javafx.scene.input.MouseEvent;
 public class ControladorPantallaPrincipal {
 
     @FXML
-    private Button mostrarLed, mostrarSwitch, agregarProtoboard, botonAgregaBateria, botonSwitch3X3, botonSwitch8x3, botonChip;
+    private Button mostrarLed, mostrarSwitch, agregarProtoboard, botonAgregaBateria, botonSwitch3X3, botonSwitch8x3, botonChip, botonDisplay;
     @FXML
     private AnchorPane pantallaPrincipal;
     @FXML
@@ -29,12 +29,13 @@ public class ControladorPantallaPrincipal {
         VariablesGlobales.pantallaPrincipal = pantallaPrincipal;
         VariablesGlobales.aparecioBateria = false;
 
-        botonAgregaBateria.setOnAction(event -> cargarInterfacezElementos("motor.fxml"));
-        mostrarLed.setOnAction(event -> cargarInterfacezElementos("led.fxml"));
-        agregarProtoboard.setOnAction(event -> cargarInterfacezElementos("protoboard.fxml"));
-        botonSwitch3X3.setOnAction(event -> cargarInterfacezElementos("Switch3X3.fxml"));
-        botonSwitch8x3.setOnAction(event -> cargarInterfacezElementos("Switch8x3.fxml"));
-        agregaResistencia.setOnAction(event -> cargarInterfacezElementos("resistencia.fxml"));
+        botonAgregaBateria.setOnAction(event -> cargarInterfacezElementos("motor.fxml", "ninguno"));
+        mostrarLed.setOnAction(event -> cargarInterfacezElementos("led.fxml", "ninguno"));
+        agregarProtoboard.setOnAction(event -> cargarInterfacezElementos("protoboard.fxml", "ninguno"));
+        botonSwitch3X3.setOnAction(event -> cargarInterfacezElementos("Switch3X3.fxml", "ninguno"));
+        botonSwitch8x3.setOnAction(event -> cargarInterfacezElementos("Switch8x3.fxml", "ninguno"));
+        agregaResistencia.setOnAction(event -> cargarInterfacezElementos("resistencia.fxml", "ninguno"));
+        botonDisplay.setOnAction(event -> cargarInterfacezElementos("Display.fxml", "ninguno"));
 
         // Configurar el menú de opciones para el chip
         configurarMenuChip();
@@ -42,6 +43,7 @@ public class ControladorPantallaPrincipal {
 
     // Método que configura el menú de opciones para el botón "Chip"
     private void configurarMenuChip() {
+        ChipAND chipAnd = new ChipAND();
         ContextMenu menuChip = new ContextMenu();
 
         // Crear opciones para el menú (AND, OR, NOT)
@@ -63,32 +65,36 @@ public class ControladorPantallaPrincipal {
                 menuChip.show(botonChip, event.getScreenX(), event.getScreenY());
             }
         });
+
+        //Manejamos cuando se selecciona chip AND
+        opcionAND.setOnAction(event -> {
+            cargarInterfacezElementos("chip.fxml", "AND");
+        });
+
+        opcionOR.setOnAction(event -> {
+            cargarInterfacezElementos("chip.fxml", "OR");
+        });
+
+        opcionNOT.setOnAction(event -> {
+            cargarInterfacezElementos("chip.fxml", "NOT");
+        });
     }
-
-    // Método que carga la interfaz y el controlador del chip seleccionado
-    // Método que carga la interfaz del chip y pasa el nombre al controlador
-   /* private void cargarControladorChip(String operacion) {
-       try {
-            // Cargar la interfaz del chip
-            //cargarInterfacezElementos("chip.fxml");
-
-            // Obtener el controlador y pasar la operación seleccionada
-            //FXMLLoader loader = new FXMLLoader(getClass().getResource("chip.fxml"));
-
-            // Obtener el controlador y ejecutar la operación correspondiente
-            ControladorChip controladorChip = loader.getController();
-            controladorChip.cargarOperacion(operacion);
-
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
 
     // Método general para cargar interfaces de otros elementos
-    private void cargarInterfacezElementos(String nombre) {
+    private void cargarInterfacezElementos(String nombre, String tipo) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(nombre));
+
+            //Asignamos el controlador manual, para que funcionen las subclases
+            if (tipo.equals("AND")) {
+                loader.setController(new ChipAND());
+            }else if (tipo.equals("OR")) {
+                loader.setController(new ChipOR());
+            }else if (tipo.equals("NOT")) {
+                loader.setController(new ChipNOT());
+            }
+
             Parent elemento = loader.load();
             elemento.setLayoutX(47);
             elemento.setLayoutY(100);
