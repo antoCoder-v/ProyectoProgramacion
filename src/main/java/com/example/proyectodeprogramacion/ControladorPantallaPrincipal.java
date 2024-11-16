@@ -50,11 +50,7 @@ public class ControladorPantallaPrincipal {
         MenuItem opcionAND = new MenuItem("AND");
         MenuItem opcionOR = new MenuItem("OR");
         MenuItem opcionNOT = new MenuItem("NOT");
-
-        // Asignar acciones a cada opción del menú
-        /*opcionAND.setOnAction(event -> cargarControladorChip("AND"));
-        opcionOR.setOnAction(event -> cargarControladorChip("OR"));
-        opcionNOT.setOnAction(event -> cargarControladorChip("NOT"));*/
+        
 
         // Agregar las opciones al menú
         menuChip.getItems().addAll(opcionAND, opcionOR, opcionNOT);
