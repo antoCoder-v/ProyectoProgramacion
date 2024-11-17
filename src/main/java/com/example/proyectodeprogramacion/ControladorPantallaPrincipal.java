@@ -4,6 +4,9 @@ package com.example.proyectodeprogramacion;
 // IDE: IntelliJ IDEA 2022.1
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,6 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 public class ControladorPantallaPrincipal {
 
@@ -22,6 +26,11 @@ public class ControladorPantallaPrincipal {
     private AnchorPane pantallaPrincipal;
     @FXML
     private Button agregaResistencia;
+
+    private VBox contenedorProtoboards; // Contenedor para las protoboards dinámicas
+
+    private int contadorProtoboards = 0; // Contador global de IDs para las protoboards
+    private List<ControladorProtoboard> listaProtoboards = new ArrayList<>(); // Lista de protoboards
 
     @FXML
     public void initialize() {
@@ -50,7 +59,7 @@ public class ControladorPantallaPrincipal {
         MenuItem opcionAND = new MenuItem("AND");
         MenuItem opcionOR = new MenuItem("OR");
         MenuItem opcionNOT = new MenuItem("NOT");
-        
+
 
         // Agregar las opciones al menú
         menuChip.getItems().addAll(opcionAND, opcionOR, opcionNOT);
@@ -80,20 +89,27 @@ public class ControladorPantallaPrincipal {
     // Método general para cargar interfaces de otros elementos
     private void cargarInterfacezElementos(String nombre, String tipo) {
         try {
+            // Cargar el archivo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource(nombre));
+            Parent elemento = loader.load();
 
-            //Asignamos el controlador manual, para que funcionen las subclases
-            if (tipo.equals("AND")) {
-                loader.setController(new ChipAND());
-            }else if (tipo.equals("OR")) {
-                loader.setController(new ChipOR());
-            }else if (tipo.equals("NOT")) {
-                loader.setController(new ChipNOT());
+            // Configurar controlador si es una protoboard
+            if (nombre.equals("protoboard.fxml")) {
+                ControladorProtoboard controlador = loader.getController();
+
+                // Asignar un ID único a la protoboard y registrarla en la lista
+                controlador.setId(contadorProtoboards++);
+                listaProtoboards.add(controlador);
+
+                System.out.println("Nueva protoboard creada con ID: " + controlador.getId());
+                System.out.println("Cantidad actual de protoboards: " + listaProtoboards.size());
             }
 
-            Parent elemento = loader.load();
+            // Configurar posición inicial del elemento (opcional)
             elemento.setLayoutX(47);
             elemento.setLayoutY(100);
+
+            // Agregar el elemento al contenedor principal
             pantallaPrincipal.getChildren().add(elemento);
         } catch (IOException e) {
             e.printStackTrace();
