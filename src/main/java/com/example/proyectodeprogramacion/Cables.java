@@ -56,14 +56,6 @@ public class Cables {
         return buttonStart;
     }
 
-    // Metodo para actualizar los cambios en los Gridpanes
-    public void actualizarGridpanes() {
-        busInferior.layout();
-        busSuperior.layout();
-        pistaInferior.layout();
-        pistaSuperior.layout();
-    }
-
     // | Método para establecer el segundo botón y dibujar el cable
     public void setButtonEndAndDrawCable(Button button) {
         this.buttonEnd = button;
@@ -402,8 +394,7 @@ public class Cables {
         }
     }
 
-    // Logica de actualizacion de corriente de la bateria (Al apagar y prender
-    // bateria)
+    // Logica de actualizacion de corriente de la bateria (Al apagar y prender bateria)
     public void LogicaBateria() {
         // buscamos donde pasa corriente la bateria
         for (CableInfo cableInfo : cablesConectados) {
