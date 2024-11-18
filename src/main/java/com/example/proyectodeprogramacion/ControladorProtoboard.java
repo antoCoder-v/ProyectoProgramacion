@@ -12,6 +12,8 @@ import javafx.scene.media.AudioClip;
 
 public class ControladorProtoboard {
 
+    private int id; // Identificador único de la protoboard
+
     @FXML
     private GridPane busSuperior, pistaSuperior, busInferior, pistaInferior;
 
@@ -41,6 +43,7 @@ public class ControladorProtoboard {
     public GridPane getPistaInferior() {
         return pistaInferior;
     }
+
 
     @FXML
     public void initialize() {
@@ -76,6 +79,14 @@ public class ControladorProtoboard {
             }
         };
         timer.start();
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     // Método que recorre un GridPane y añade botones en cada celda
