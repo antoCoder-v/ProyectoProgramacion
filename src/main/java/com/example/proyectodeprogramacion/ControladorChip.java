@@ -1,7 +1,7 @@
 package com.example.proyectodeprogramacion;
 
+import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -11,6 +11,10 @@ import javafx.scene.Node;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class ControladorChip {
 
@@ -21,6 +25,7 @@ public abstract class ControladorChip {
 
     protected double offsetX, offsetY;
     protected ControladorProtoboard protoboard;
+    private final Map<Rectangle, Set<Button>> botonesPorSalida = new HashMap<>();
 
     public void setTipoChip(String tipoChip) {
         this.tipoChip.setText(tipoChip);
@@ -31,7 +36,22 @@ public abstract class ControladorChip {
         protoboard = VariablesGlobales.controladorProtoboard;
         paneChip.setOnMousePressed(this::onMousePressed);
         paneChip.setOnMouseDragged(this::onMouseDragged);
-        ejecutarOperacion();
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (pinesCorrectamenteConectados()) {
+                    ejecutarOperacion(); // Propaga corriente normalmente
+                } else {
+                    // Limpia todas las salidas si los pines están desconectados
+                    for (Rectangle salida : botonesPorSalida.keySet()) {
+                        limpiarColoresBotones(salida);
+                    }
+                }
+            }
+        };
+        timer.start();
+
+
     }
 
     public void onMousePressed(MouseEvent event) {
@@ -45,6 +65,18 @@ public abstract class ControladorChip {
         //verificarConexionPins();
         ejecutarOperacion();
     }
+    private void limpiarColoresBotones(Rectangle salida) {
+        Set<Button> botones = botonesPorSalida.get(salida);
+        if (botones != null) {
+            for (Button button : botones) {
+                cambiarColorBoton(button, Color.BLACK); // Restablece al estilo inicial (sin color)
+            }
+            botones.clear(); // Limpia el registro para esta salida
+        }
+    }
+
+
+
 
     public boolean verificarColorPin(Rectangle pin, Color colorEsperado) {
         Button button = obtenerBotonCorrespondiente(pin);
@@ -55,7 +87,6 @@ public abstract class ControladorChip {
         pin.setFill(Color.BLACK);
         return false;
     }
-
     public Color obtenerColorBoton(Button button) {
         String[] parts = button.getId().split("-");
         String carga = parts.length > 4 ? parts[4].trim() : "";
@@ -83,8 +114,13 @@ public abstract class ControladorChip {
     protected void propagarCorriente(Rectangle salida, Color color) {
         if (!pinesCorrectamenteConectados()) {
             System.out.println("Corriente no propagada debido a conexión incorrecta en pines 7 y 14.");
+            limpiarColoresBotones(salida); // Limpia solo los botones asociados a esta salida
             return;
         }
+
+        // Limpia los colores anteriores de esta salida
+        limpiarColoresBotones(salida);
+
         GridPane pista = obtenerPistaCorrespondiente(salida);
         if (pista != null) {
             Bounds salidaBounds = salida.localToScene(salida.getBoundsInLocal());
@@ -93,16 +129,28 @@ public abstract class ControladorChip {
                     Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
                     if (Math.abs(buttonBounds.getMinX() - salidaBounds.getMinX()) < 5) {
                         cambiarColorBoton(button, color);
+                        botonesPorSalida
+                                .computeIfAbsent(salida, k -> new HashSet<>()) // Crea un nuevo conjunto si no existe
+                                .add(button); // Registra el botón coloreado para esta salida
                     }
                 }
             }
         }
     }
 
+
+
     private void cambiarColorBoton(Button button, Color color) {
-        String colorHex = color.equals(Color.RED) ? "red" : color.equals(Color.GREEN) ? "green" : "black";
-        button.setStyle("-fx-background-color: " + colorHex + "; -fx-background-radius: 30;");
+        if (color.equals(Color.BLACK)) {
+            // Restablece al estilo sin color
+            button.setStyle("-fx-background-radius: 30;");
+        } else {
+            // Aplica el color correspondiente
+            String colorHex = color.equals(Color.RED) ? "red" : color.equals(Color.GREEN) ? "green" : "black";
+            button.setStyle("-fx-background-color: " + colorHex + "; -fx-background-radius: 30;");
+        }
     }
+
 
     private GridPane obtenerPistaCorrespondiente(Rectangle salida) {
         Bounds salidaBounds = salida.localToScene(salida.getBoundsInLocal());

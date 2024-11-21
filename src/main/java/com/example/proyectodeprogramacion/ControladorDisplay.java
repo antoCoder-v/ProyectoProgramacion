@@ -12,7 +12,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Button;
 
-public class ControladorDisplay {
+public class ControladorDisplay implements ControladorElemento{
     //SOLO RECIBE CARGA NEGATIVA
 
     @FXML
@@ -26,11 +26,12 @@ public class ControladorDisplay {
 
     private double offsetX, offsetY;
     private ControladorProtoboard protoboard;
+    private String color = "";
 
     @FXML
     public void initialize() {
         protoboard = VariablesGlobales.controladorProtoboard;
-
+        EliminarElementos.habilitarEliminacion(anchorDeDisplay, this);
         //Controlamos movimiento del display
         anchorDeDisplay.setOnMousePressed(this::onMousePressed);
         anchorDeDisplay.setOnMouseDragged(this::onMouseDragged);
@@ -44,10 +45,14 @@ public class ControladorDisplay {
                 reconoceCarga(d, deD);
                 reconoceCarga(e, deE);
                 reconoceCarga(f, deF);
-                reconoceCarga(g, deG);                
+                reconoceCarga(g, deG);
             }
         };
         timer.start();
+    }
+    @Override
+    public void setColor(String color) {
+        this.color = color;
     }
 
     private void onMousePressed(MouseEvent event) {
@@ -68,7 +73,7 @@ public class ControladorDisplay {
 
         Bounds recibeBounds = recibe.localToScene(recibe.getBoundsInLocal());
         GridPane[] gridPanes = {protoboard.getPistaSuperior(), protoboard.getPistaInferior() };
-        
+
         for (GridPane gridPane : gridPanes) {
             for (Node node : gridPane.getChildren()) {
                 Button button = (Button) node;
@@ -86,15 +91,15 @@ public class ControladorDisplay {
                 if(recibeBounds.intersects(buttonBounds) && carga.equals("positiva")){
                     luz.setFill(Color.WHITE);
                     recibe.setFill(Color.GREEN);
-                }else if(recibeBounds.intersects(buttonBounds) && carga.equals("negativa") || 
-                    recibeBounds.intersects(buttonBounds) && carga.equals("0")){
+                }else if(recibeBounds.intersects(buttonBounds) && carga.equals("negativa") ||
+                        recibeBounds.intersects(buttonBounds) && carga.equals("0")){
                     luz.setFill(Color.GRAY);
                     recibe.setFill(Color.GRAY);
                 }
-                
+
             }
         }
 
     }
-    
+
 }

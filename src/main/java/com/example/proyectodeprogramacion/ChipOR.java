@@ -4,13 +4,19 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class ChipOR extends ControladorChip{
+public class ChipOR extends ControladorChip implements ControladorElemento{
     @FXML
     protected AnchorPane paneChip;
+    private String color = "";
+
+    @Override
+    public void setColor(String color) {
+        this.color = color;
+    }
 
     @Override
     protected void ejecutarOperacion() {
-
+        EliminarElementos.habilitarEliminacion(paneChip, this);
         //Logica de la operacion OR
         setTipoChip("OR");
         verificarOperacionesOR();

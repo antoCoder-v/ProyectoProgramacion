@@ -4,16 +4,22 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class ChipNOT extends ControladorChip{
+public class ChipNOT extends ControladorChip implements ControladorElemento{
     @FXML
     protected AnchorPane paneChip;
+    private String color = "";
 
     @Override
     protected void ejecutarOperacion() {
-
+        EliminarElementos.habilitarEliminacion(paneChip, this);
         //Logica de la operacion NOT
         setTipoChip("NOT");
         verificarOperacionesNOT();
+    }
+
+    @Override
+    public void setColor(String color) {
+        this.color = color;
     }
     private void verificarOperacionesNOT() {
         verificarCompuertaNOT(pin1, pin2); // Compuerta 1

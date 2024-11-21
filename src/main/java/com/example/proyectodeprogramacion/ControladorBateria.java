@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
-public class ControladorBateria {
+public class ControladorBateria implements ControladorElemento{
 
     @FXML
     private Button botonCargaPositiva;
@@ -21,10 +21,12 @@ public class ControladorBateria {
     private double offsetX, offsetY;
     private boolean pasoCorriente = true;
     private Cables cableManager;
+    private String color = "";
 
     @FXML
     public void initialize() {
         VariablesGlobales.aparecioBateria = true;
+        EliminarElementos.habilitarEliminacion(paneBateria, this);
         // EliminarElementos.habilitarEliminacion(paneBateria);
         cableManager = VariablesGlobales.cables;
 
@@ -47,6 +49,10 @@ public class ControladorBateria {
             cableManager.actualizarCorrienteTodos();
         });
 
+    }
+    @Override
+    public void setColor(String color) {
+        this.color = color;
     }
 
     @FXML

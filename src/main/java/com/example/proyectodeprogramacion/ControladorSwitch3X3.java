@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-public class ControladorSwitch3X3 {
+public class ControladorSwitch3X3 implements ControladorElemento{
 
     @FXML
     private AnchorPane switchPane; // Contiene todo el contenido del switch, incluyendo el Rectangle y los Circles
@@ -33,11 +33,13 @@ public class ControladorSwitch3X3 {
     private Cables cables;
     private String corriente = "", tipoGridPane = ""; // Variable para guardar la corriente y el tipo de gridpane
     private int colCircle1;
+    private String color = "";
 
     @FXML
     public void initialize() {
         protoboard = VariablesGlobales.controladorProtoboard;
         cables = VariablesGlobales.cables;
+        EliminarElementos.habilitarEliminacion(switchPane, this);
 
         // Borramos switch con clic derecho
         // EliminarElementos.habilitarEliminacion(switchPane);
@@ -68,6 +70,10 @@ public class ControladorSwitch3X3 {
         };
         timer.start();
 
+    }
+    @Override
+    public void setColor(String color) {
+        this.color = color;
     }
 
     // Funcion para maneja cuando se presione el switch
