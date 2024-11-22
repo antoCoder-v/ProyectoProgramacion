@@ -24,6 +24,7 @@ public class ControladorProtoboard implements ControladorElemento{
     // Clases externas
     private Cables cableManager;
     private String color = "";
+    private int id; // Identificador único de la protoboard
 
     private double offsetX, offsetY; // variables para almacenar la posición del mouse
 
@@ -41,6 +42,13 @@ public class ControladorProtoboard implements ControladorElemento{
 
     public GridPane getPistaInferior() {
         return pistaInferior;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @FXML

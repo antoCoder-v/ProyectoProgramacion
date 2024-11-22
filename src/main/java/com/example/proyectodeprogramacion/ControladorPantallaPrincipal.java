@@ -89,27 +89,20 @@ public class ControladorPantallaPrincipal {
     // Método general para cargar interfaces de otros elementos
     private void cargarInterfacezElementos(String nombre, String tipo) {
         try {
-            // Cargar el archivo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource(nombre));
-            Parent elemento = loader.load();
 
-            // Configurar controlador si es una protoboard
-            if (nombre.equals("protoboard.fxml")) {
-                ControladorProtoboard controlador = loader.getController();
-
-                // Asignar un ID único a la protoboard y registrarla en la lista
-                controlador.setId(contadorProtoboards++);
-                listaProtoboards.add(controlador);
-
-                System.out.println("Nueva protoboard creada con ID: " + controlador.getId());
-                System.out.println("Cantidad actual de protoboards: " + listaProtoboards.size());
+            //Asignamos el controlador manual, para que funcionen las subclases
+            if (tipo.equals("AND")) {
+                loader.setController(new ChipAND());
+            }else if (tipo.equals("OR")) {
+                loader.setController(new ChipOR());
+            }else if (tipo.equals("NOT")) {
+                loader.setController(new ChipNOT());
             }
 
-            // Configurar posición inicial del elemento (opcional)
+            Parent elemento = loader.load();
             elemento.setLayoutX(47);
             elemento.setLayoutY(100);
-
-            // Agregar el elemento al contenedor principal
             pantallaPrincipal.getChildren().add(elemento);
         } catch (IOException e) {
             e.printStackTrace();
