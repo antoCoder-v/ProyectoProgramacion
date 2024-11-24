@@ -45,6 +45,10 @@ public class ControladorLed implements ControladorElemento {
         this.color = color;
     }
 
+    public void setProtoboard(ControladorProtoboard protoboard) {
+        this.protoboard = protoboard;
+    }
+
     // Inicialización del controlador
     @FXML
     public void initialize() {

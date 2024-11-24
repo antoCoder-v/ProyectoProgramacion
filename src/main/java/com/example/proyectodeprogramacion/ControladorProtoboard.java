@@ -10,6 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.AudioClip;
 
+import java.util.List;
+
 public class ControladorProtoboard {
 
     private int id; // Identificador único de la protoboard
@@ -42,6 +44,14 @@ public class ControladorProtoboard {
 
     public GridPane getPistaInferior() {
         return pistaInferior;
+    }
+
+    public void agregarElementoDinamico(Object elemento) {
+        elementosDinamicos.add(elemento);
+    }
+
+    public List<Object> getElementosDinamicos() {
+        return elementosDinamicos;
     }
 
 

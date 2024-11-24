@@ -101,18 +101,134 @@ public class ControladorPantallaPrincipal {
                 controlador.setId(contadorProtoboards++);
                 listaProtoboards.add(controlador);
 
+                // Agregar elementos dinámicos a la protoboard
+                agregarElementosDinamicos(controlador);
+
                 System.out.println("Nueva protoboard creada con ID: " + controlador.getId());
                 System.out.println("Cantidad actual de protoboards: " + listaProtoboards.size());
+            } else if (nombre.equals("chip.fxml")) {
+                // Si se está cargando un chip, establecer el tipo en el controlador
+                ControladorChip controladorChip = loader.getController();
+
+                // Configurar el tipo de chip
+                if (tipo.equals("AND")) {
+                    ((ChipAND) controladorChip).setTipoChip("AND");
+                } else if (tipo.equals("OR")) {
+                    ((ChipOR) controladorChip).setTipoChip("OR");
+                } else if (tipo.equals("NOT")) {
+                    ((ChipNOT) controladorChip).setTipoChip("NOT");
+                }
+
+                // Agregar el chip al contenedor principal
+                pantallaPrincipal.getChildren().add(elemento);
+            } else {
+                // Para otros elementos que no son protoboards ni chips
+                pantallaPrincipal.getChildren().add(elemento);
             }
 
             // Configurar posición inicial del elemento (opcional)
             elemento.setLayoutX(47);
             elemento.setLayoutY(100);
 
-            // Agregar el elemento al contenedor principal
-            pantallaPrincipal.getChildren().add(elemento);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void agregarElementosDinamicos(ControladorProtoboard controlador) {
+        try {
+            // **Cargar y asociar un LED**
+            FXMLLoader ledLoader = new FXMLLoader(getClass().getResource("led.fxml"));
+            Parent led = ledLoader.load();
+            ControladorLed controladorLed = ledLoader.getController();
+            controladorLed.setProtoboard(controlador);
+            controlador.getMainPane().getChildren().add(led);
+
+            // Registrar el LED en la protoboard
+            controlador.agregarElementoDinamico(controladorLed);
+
+            // **Cargar y asociar una Resistencia**
+            FXMLLoader resistenciaLoader = new FXMLLoader(getClass().getResource("resistencia.fxml"));
+            Parent resistencia = resistenciaLoader.load();
+            ControladorResistencia controladorResistencia = resistenciaLoader.getController();
+            controladorResistencia.setProtoboard(controlador);
+            controlador.getMainPane().getChildren().add(resistencia);
+
+            // Registrar la resistencia en la protoboard
+            controlador.agregarElementoDinamico(controladorResistencia);
+
+            // **Cargar y asociar un Switch 3x3**
+            FXMLLoader switch3x3Loader = new FXMLLoader(getClass().getResource("Switch3X3.fxml"));
+            Parent switch3x3 = switch3x3Loader.load();
+            ControladorSwitch3X3 controladorSwitch3X3 = switch3x3Loader.getController();
+            controladorSwitch3X3.setProtoboard(controlador);
+            controlador.getMainPane().getChildren().add(switch3x3);
+
+            // Registrar el Switch 3x3 en la protoboard
+            controlador.agregarElementoDinamico(controladorSwitch3X3);
+
+            // **Cargar y asociar un Switch 8x3**
+            FXMLLoader switch8x3Loader = new FXMLLoader(getClass().getResource("Switch8x3.fxml"));
+            Parent switch8x3 = switch8x3Loader.load();
+            ControladorSwitch8x3 controladorSwitch8x3 = switch8x3Loader.getController();
+            controladorSwitch8x3.setProtoboard(controlador);
+            controlador.getMainPane().getChildren().add(switch8x3);
+
+            // Registrar el Switch 8x3 en la protoboard
+            controlador.agregarElementoDinamico(controladorSwitch8x3);
+
+            // **Cargar y asociar un Display**
+            FXMLLoader displayLoader = new FXMLLoader(getClass().getResource("Display.fxml"));
+            Parent display = displayLoader.load();
+            ControladorDisplay controladorDisplay = displayLoader.getController();
+            controladorDisplay.setProtoboard(controlador);
+            controlador.getMainPane().getChildren().add(display);
+
+            // Registrar el Display en la protoboard
+            controlador.agregarElementoDinamico(controladorDisplay);
+
+            // **Cargar y asociar un Chip (AND, OR, NOT)**
+            FXMLLoader chipLoader = new FXMLLoader(getClass().getResource("chip.fxml"));
+            Parent chip = chipLoader.load();
+            ControladorChip controladorChip = chipLoader.getController();
+            controladorChip.setProtoboard(controlador);
+
+            // Dependiendo del tipo de chip, puedes establecer su tipo
+            if (tipo.equals("AND")) {
+                ((ChipAND) controladorChip).setTipoChip("AND");
+            } else if (tipo.equals("OR")) {
+                ((ChipOR) controladorChip).setTipoChip("OR");
+            } else if (tipo.equals("NOT")) {
+                ((ChipNOT) controladorChip).setTipoChip("NOT");
+            }
+
+            controlador.getMainPane().getChildren().add(chip);
+
+            // Registrar el Chip en la protoboard
+            controlador.agregarElementoDinamico(controladorChip);
+
+            // **Cargar y asociar una Batería (Motor)**
+            FXMLLoader bateriaLoader = new FXMLLoader(getClass().getResource("motor.fxml"));
+            Parent bateria = bateriaLoader.load();
+            ControladorBateria controladorBateria = bateriaLoader.getController();
+            controladorBateria.setProtoboard(controlador);
+            controlador.getMainPane().getChildren().add(bateria);
+
+            // Registrar la Batería en la protoboard
+            controlador.agregarElementoDinamico(controladorBateria);
+
+            // **Agregar más elementos si es necesario**
+            // Aquí puedes cargar y asociar otros elementos adicionales
+            // ...
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public List<ControladorProtoboard> getListaProtoboards() {
+        return listaProtoboards;
     }
 }
