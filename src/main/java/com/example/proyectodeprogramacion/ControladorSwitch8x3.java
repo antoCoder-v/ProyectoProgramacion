@@ -5,12 +5,13 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class ControladorSwitch8x3 {
+public class ControladorSwitch8x3 implements ControladorElemento{
 
     @FXML
     private Pane paneSwitch8x3;
@@ -27,21 +28,23 @@ public class ControladorSwitch8x3 {
             pasoCorriente5 = false, pasoCorriente6 = false, pasoCorriente7 = false, pasoCorriente8 = false;
 
     // Variables para manejar el arrastre del switch
-    private double mouseXOffset;
-    private double mouseYOffset;
+    protected double offsetX, offsetY;
+    private String color = "";
+
 
     @FXML
     public void initialize() {
         // Inicializamos las variables
         protoboard = VariablesGlobales.controladorProtoboard;
         cables = VariablesGlobales.cables;
+        EliminarElementos.habilitarEliminacion(paneSwitch8x3, this);
 
         // Habilitamos la eliminación del switch
         // EliminarElementos.habilitarEliminacion(paneSwitch8x3);
 
         // Configuramos los eventos para el arrastre del switch
-        paneSwitch8x3.setOnMousePressed(this::handleMousePressed);
-        paneSwitch8x3.setOnMouseDragged(this::handleMouseDragged);
+        paneSwitch8x3.setOnMousePressed(this::onMousePressed);
+        paneSwitch8x3.setOnMouseDragged(this::onMouseDragged);
 
         // Majeno de paso de corriente en las patitas
         bot1.setOnAction(event -> {
@@ -109,6 +112,10 @@ public class ControladorSwitch8x3 {
             }
         };
         timer.start();
+    }
+    @Override
+    public void setColor(String color) {
+        this.color = color;
     }
 
     // Verificar si hay corriente en la patita superior y pasarla a la patita
@@ -209,14 +216,14 @@ public class ControladorSwitch8x3 {
     }
 
     // Manejo del arrastre del switch
-    private void handleMousePressed(javafx.scene.input.MouseEvent event) {
-        mouseXOffset = event.getSceneX() - paneSwitch8x3.getTranslateX();
-        mouseYOffset = event.getSceneY() - paneSwitch8x3.getTranslateY();
+    public void onMousePressed(MouseEvent event) {
+        offsetX = event.getSceneX() - paneSwitch8x3.getLayoutX();
+        offsetY = event.getSceneY() - paneSwitch8x3.getLayoutY();
     }
 
-    private void handleMouseDragged(javafx.scene.input.MouseEvent event) {
-        paneSwitch8x3.setTranslateX(event.getSceneX() - mouseXOffset);
-        paneSwitch8x3.setTranslateY(event.getSceneY() - mouseYOffset);
+    public void onMouseDragged(MouseEvent event) {
+        paneSwitch8x3.setLayoutX(event.getSceneX() - offsetX);
+        paneSwitch8x3.setLayoutY(event.getSceneY() - offsetY);
     }
 
     // nos indica en que pista o bus se encuentra la patita inferior

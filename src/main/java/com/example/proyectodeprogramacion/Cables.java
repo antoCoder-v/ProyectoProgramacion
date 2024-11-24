@@ -19,18 +19,26 @@ public class Cables {
     private String estilo, carga; // Manejamos la carga que tienen alguno de los botones
     private List<CableInfo> cablesConectados; // Lista para almacenar los cables conectados
 
-    // Clase interna para almacenar la información de los cables
-    public class CableInfo {
-        Button startButton;
-        Button endButton;
-        Line cable;
+    private int protoboardIdStart, protoboardIdEnd;
 
-        public CableInfo(Button startButton, Button endButton, Line cable) {
+    // Clase interna para almacenar la información de los cables
+    public static class CableInfo {
+        int protoboardIdStart; // ID de la protoboard de inicio
+        int protoboardIdEnd;   // ID de la protoboard de fin
+        Button startButton;    // Botón de inicio del cable
+        Button endButton;      // Botón de fin del cable
+        Line cable;            // Representación gráfica del cable
+
+        public CableInfo(int protoboardIdStart, int protoboardIdEnd, Button startButton, Button endButton, Line cable) {
+            this.protoboardIdStart = protoboardIdStart;
+            this.protoboardIdEnd = protoboardIdEnd;
             this.startButton = startButton;
             this.endButton = endButton;
             this.cable = cable;
         }
     }
+
+
 
     public List<CableInfo> getCablesConectados() {
         return cablesConectados;
@@ -131,7 +139,7 @@ public class Cables {
         pane.getChildren().add(cable);
 
         // Agregar el cable y los botones a la lista de cables conectados
-        cablesConectados.add(new CableInfo(buttonStart, buttonEnd, cable));
+        cablesConectados.add(new CableInfo(protoboardIdStart, protoboardIdEnd, buttonStart, buttonEnd, cable));
     }
 
     // Método para eliminar un cable
@@ -427,5 +435,30 @@ public class Cables {
                 }
             }
         }
+    }
+    // Método para conectar dos protoboards
+
+    public void conectar(int protoboardIdStart, Button startButton, int protoboardIdEnd, Button endButton) {
+        // Crear una línea que represente el cable
+        Line cable = new Line();
+        cable.setStartX(startButton.getLayoutX() + startButton.getWidth() / 2);
+        cable.setStartY(startButton.getLayoutY() + startButton.getHeight() / 2);
+        cable.setEndX(endButton.getLayoutX() + endButton.getWidth() / 2);
+        cable.setEndY(endButton.getLayoutY() + endButton.getHeight() / 2);
+        cable.setStroke(Color.BLACK);
+        cable.setStrokeWidth(2);
+
+        // Agregar la línea al pane
+        pane.getChildren().add(cable);
+
+        // Registrar la conexión
+        cablesConectados.add(new CableInfo(protoboardIdStart, protoboardIdEnd, startButton, endButton, cable));
+
+        // Mensaje de éxito
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Conexión Exitosa");
+        alert.setHeaderText(null);
+        alert.setContentText("Se ha conectado la protoboard " + protoboardIdStart + " con la protoboard " + protoboardIdEnd);
+        alert.showAndWait();
     }
 }

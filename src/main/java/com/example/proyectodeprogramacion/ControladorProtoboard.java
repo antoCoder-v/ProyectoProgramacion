@@ -10,7 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.AudioClip;
 
-public class ControladorProtoboard {
+public class ControladorProtoboard implements ControladorElemento{
 
     @FXML
     private GridPane busSuperior, pistaSuperior, busInferior, pistaInferior;
@@ -23,6 +23,8 @@ public class ControladorProtoboard {
 
     // Clases externas
     private Cables cableManager;
+    private String color = "";
+    private int id; // Identificador único de la protoboard
 
     private double offsetX, offsetY; // variables para almacenar la posición del mouse
 
@@ -41,11 +43,18 @@ public class ControladorProtoboard {
     public GridPane getPistaInferior() {
         return pistaInferior;
     }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
 
     @FXML
     public void initialize() {
         VariablesGlobales.controladorProtoboard = this;
-
+        EliminarElementos.habilitarEliminacion(PantallaProtoboard, this);
         // Habilitar eliminación con clic derecho para la protoboard
         // EliminarElementos.habilitarEliminacion(PantallaProtoboard);
 
@@ -77,6 +86,10 @@ public class ControladorProtoboard {
         };
         timer.start();
     }
+    @Override
+    public void setColor(String color) {
+        this.color = color;
+    }
 
     // Método que recorre un GridPane y añade botones en cada celda
     private void agregarBotonesGridPane(GridPane gridPane, String tipo) {
@@ -93,7 +106,7 @@ public class ControladorProtoboard {
                 // Asignar un ID basado en la posición button + tipo + row + col + carga +
                 // cableConectado
                 button.setId("Button -" + tipo + "-" + row + "-" + col + "-0-desconectado"); // carga "0 y no" por
-                                                                                             // defecto
+                // defecto
 
                 // manejamos el clic a la protoboard
                 button.setOnAction(event -> {
@@ -157,5 +170,4 @@ public class ControladorProtoboard {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 }

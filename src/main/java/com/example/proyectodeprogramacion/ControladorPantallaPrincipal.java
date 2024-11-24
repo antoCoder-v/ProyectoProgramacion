@@ -4,6 +4,9 @@ package com.example.proyectodeprogramacion;
 // IDE: IntelliJ IDEA 2022.1
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,6 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 public class ControladorPantallaPrincipal {
 
@@ -22,6 +26,11 @@ public class ControladorPantallaPrincipal {
     private AnchorPane pantallaPrincipal;
     @FXML
     private Button agregaResistencia;
+
+    private VBox contenedorProtoboards; // Contenedor para las protoboards dinámicas
+
+    private int contadorProtoboards = 0; // Contador global de IDs para las protoboards
+    private List<ControladorProtoboard> listaProtoboards = new ArrayList<>(); // Lista de protoboards
 
     @FXML
     public void initialize() {
@@ -51,10 +60,6 @@ public class ControladorPantallaPrincipal {
         MenuItem opcionOR = new MenuItem("OR");
         MenuItem opcionNOT = new MenuItem("NOT");
 
-        // Asignar acciones a cada opción del menú
-        /*opcionAND.setOnAction(event -> cargarControladorChip("AND"));
-        opcionOR.setOnAction(event -> cargarControladorChip("OR"));
-        opcionNOT.setOnAction(event -> cargarControladorChip("NOT"));*/
 
         // Agregar las opciones al menú
         menuChip.getItems().addAll(opcionAND, opcionOR, opcionNOT);
