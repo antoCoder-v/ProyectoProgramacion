@@ -41,6 +41,7 @@ public class ControladorDisplay implements ControladorElemento{
             @Override
             public void handle(long now) {
                 verificaSiPrende(punto, dePunto);
+
                 if(puedePrender){
                     reconoceCarga(a, deA, true);
                     reconoceCarga(b, deB, true);
@@ -106,6 +107,10 @@ public class ControladorDisplay implements ControladorElemento{
                     if(recibeBounds.intersects(buttonBounds) && carga.equals("positiva")){
                         luz.setFill(Color.WHITE);
                         recibe.setFill(Color.GREEN); 
+                    }else if(recibeBounds.intersects(buttonBounds) && carga.equals("negativa") ||
+                        recibeBounds.intersects(buttonBounds) && carga.equals("0" )){
+                            luz.setFill(Color.GRAY);
+                            recibe.setFill(Color.GRAY);
                     }
                     
                 }else if(recibeBounds.intersects(buttonBounds) && carga.equals("negativa") ||
