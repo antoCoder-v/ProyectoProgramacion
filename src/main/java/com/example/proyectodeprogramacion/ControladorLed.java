@@ -36,6 +36,8 @@ public class ControladorLed implements ControladorElemento {
                                                 // concectar)
     private boolean ledExploto = false;
     private String color = "rojo";
+    private String colorUsuario = "red"; // Color inicial por defecto
+
     //private ContextMenu colorMenu;
 
     // Metodos para modificar ledConectado (IMPORTANTE que las funciones esten en la
@@ -64,7 +66,6 @@ public class ControladorLed implements ControladorElemento {
         // protoboard
         ledPane.setOnMousePressed(this::onMousePressed);
         ledPane.setOnMouseDragged(this::onMouseDragged);
-
         // Verifica si LED recibe corriente sin tener que moverlo
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -72,7 +73,7 @@ public class ControladorLed implements ControladorElemento {
                 // Variable para habilitar opciones
                 estaEncimaDeProtoboard();
                 verificarCorrienteLED();
-                
+
             }
         };
         timer.start();
@@ -98,15 +99,16 @@ public class ControladorLed implements ControladorElemento {
 
         colorMenu.getItems().addAll(morado, celeste, rosado, naranjo);
         colorMenu.show(ledPane, ledPane.getLayoutX(), ledPane.getLayoutY());
-        //return colorMenu;
     }
 
 
     // Método para cambiar el color del LED
     public void cambiarColor(String color) {
+        this.colorUsuario = color; // Guardar el color seleccionado por el usuario
         luzCirculo.setFill(Color.web(color)); // Cambia el color del círculo
-        luzRectangulo.setFill(Color.web(color));
+        luzRectangulo.setFill(Color.web(color)); // Cambia el color del rectángulo
     }
+
 
     // Método para capturar el punto inicial de arrastre (SOLO se mueve si led no
     // esta conectado)
@@ -120,6 +122,9 @@ public class ControladorLed implements ControladorElemento {
     private void onMouseDragged(MouseEvent event) {
         ledPane.setLayoutX(event.getSceneX() - offsetX);
         ledPane.setLayoutY(event.getSceneY() - offsetY);
+    }
+    public void setProtoboard(ControladorProtoboard protoboard) {
+        this.protoboard = protoboard;
     }
 
     // Metodo para verificar si led esta sobre los botones de protoboard
@@ -147,7 +152,6 @@ public class ControladorLed implements ControladorElemento {
     }
 
     // Método para verificar si el LED está correctamente colocado y recibiendo
-    // corriente
     public void verificarCorrienteLED() {
         // Verficamos si recibe la corriente correcta las patitas
         if (patita1.getFill().equals(Color.RED) && patita2.getFill().equals(Color.GREEN)) {
@@ -163,8 +167,7 @@ public class ControladorLed implements ControladorElemento {
         }
     }
 
-    // funcion que nos indica si las patitas del led coinciden con los botones de la
-    // protoboard y si estan recibiendo corriente
+    // Método para verificar si las patitas están sobre los botones de la protoboard
     private Boolean verificarPatitasEnGridPane(GridPane gridPane, Circle patitas, String patita) {
         // Obtener la posición de las patitas del LED
         Bounds patitaBounds = patitas.localToScene(patitas.getBoundsInLocal());
@@ -173,37 +176,40 @@ public class ControladorLed implements ControladorElemento {
             if (node instanceof Button) {
                 Button button = (Button) node;
 
-                // variables para guardarpartes de la id
+                // Obtener la ID y los valores asociados
                 String buttonId = button.getId();
-                String carga = ""; // obtenemos carga del boton
-                String[] parts = buttonId.split("-"); // se separa en partes la id
-                carga = parts[4].trim(); // obtenemos solo carga del boton
+                String carga = "";
+                String[] parts = buttonId.split("-");
+                if (parts.length > 4) {
+                    carga = parts[4].trim();
+                }
 
                 // Obtener los límites del botón
                 Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
 
-                // Verificar si la patita está sobre algun botón
+                // Verificar si la patita está sobre algún botón
                 if (patitaBounds.intersects(buttonBounds)) {
-                    if (carga.equals("positiva")) { // si la carga es positiva
-                        patitas.setFill(Color.GREEN);
-                    } else if (carga.equals("negativa")) { // si la carga es negativa
-                        patitas.setFill(Color.RED);
-                    } else if (carga.equals("0")) {
-                        patitas.setFill(Color.BLUE);
+                    switch (carga) {
+                        case "positiva":
+                            patitas.setFill(Color.GREEN);
+                            break;
+                        case "negativa":
+                            patitas.setFill(Color.RED);
+                            break;
+                        case "0":
+                            patitas.setFill(Color.BLUE);
+                            break;
+                        default:
+                            patitas.setFill(Color.DODGERBLUE);
+                            break;
                     }
                     return true;
                 }
             }
         }
+        // Si no está sobre ningún botón, se restaura a su color original
+        patitas.setFill(Color.DODGERBLUE);
         return false;
     }
 
-    // Método para mostrar una ventana de mensaje
-    private void mostrarVentanaMensaje(String message, String title) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }

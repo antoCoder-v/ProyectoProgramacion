@@ -1,21 +1,28 @@
 package com.example.proyectodeprogramacion;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class ChipAND extends ControladorChip{
+public class ChipAND extends ControladorChip implements ControladorElemento{
     @FXML
     protected AnchorPane paneChip;
+    private String color = "";
 
     @Override
     protected void ejecutarOperacion() {
         System.out.println("Ejecutando operación AND");
+        EliminarElementos.habilitarEliminacion(paneChip, this);
 
         //Logica de la operacion AND
         setTipoChip("AND");
         // Lógica de la operación AND en las cuatro compuertas
         verificarOperacionesAnd();
+    }
+    @Override
+    public void setColor(String color) {
+        this.color = color;
     }
 
     // Método para verificar las operaciones lógicas AND en las 4 compuertas
