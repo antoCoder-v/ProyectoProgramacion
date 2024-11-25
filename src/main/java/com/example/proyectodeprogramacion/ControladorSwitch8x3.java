@@ -48,50 +48,42 @@ public class ControladorSwitch8x3 implements ControladorElemento{
         // Majeno de paso de corriente en las patitas
         bot1.setOnAction(event -> {
             pasoCorriente1 = !pasoCorriente1;
-            String tipo = enQueGrindpane(patInf1);
-            pasoCorriente(patInf1, pasoCorriente1, tipo);
+            pasoCorriente(patSup1, patInf1, pasoCorriente1);
         });
 
         bot2.setOnAction(event -> {
             pasoCorriente2 = !pasoCorriente2;
-            String tipo = enQueGrindpane(patInf2);
-            pasoCorriente(patInf2, pasoCorriente2, tipo);
+            pasoCorriente(patSup2, patInf2, pasoCorriente2);
         });
 
         bot3.setOnAction(event -> {
             pasoCorriente3 = !pasoCorriente3;
-            String tipo = enQueGrindpane(patInf3);
-            pasoCorriente(patInf3, pasoCorriente3, tipo);
+            pasoCorriente(patSup3, patInf3, pasoCorriente3);
         });
 
         bot4.setOnAction(event -> {
             pasoCorriente4 = !pasoCorriente4;
-            String tipo = enQueGrindpane(patInf4);
-            pasoCorriente(patInf4, pasoCorriente4, tipo);
+            pasoCorriente(patSup4, patInf4, pasoCorriente4);
         });
 
         bot5.setOnAction(event -> {
             pasoCorriente5 = !pasoCorriente5;
-            String tipo = enQueGrindpane(patInf5);
-            pasoCorriente(patInf5, pasoCorriente5, tipo);
+            pasoCorriente(patSup5, patInf5, pasoCorriente5);
         });
 
         bot6.setOnAction(event -> {
             pasoCorriente6 = !pasoCorriente6;
-            String tipo = enQueGrindpane(patInf6);
-            pasoCorriente(patInf6, pasoCorriente6, tipo);
+            pasoCorriente(patSup6, patInf6, pasoCorriente6);
         });
 
         bot7.setOnAction(event -> {
             pasoCorriente7 = !pasoCorriente7;
-            String tipo = enQueGrindpane(patInf7);
-            pasoCorriente(patInf7, pasoCorriente7, tipo);
+            pasoCorriente(patSup7, patInf7, pasoCorriente7);
         });
 
         bot8.setOnAction(event -> {
             pasoCorriente8 = !pasoCorriente8;
-            String tipo = enQueGrindpane(patInf8);
-            pasoCorriente(patInf8, pasoCorriente8, tipo);
+            pasoCorriente(patSup8, patInf8, pasoCorriente8);
         });
 
         // Temporizador para verificar continuamente el estado de la corriente
@@ -100,118 +92,106 @@ public class ControladorSwitch8x3 implements ControladorElemento{
             public void handle(long now) {
                 cables.actualizarCorrienteTodos();
 
-                verificarCorrienteEnPatita(patSup1, patInf1);
-                verificarCorrienteEnPatita(patSup2, patInf2);
-                verificarCorrienteEnPatita(patSup3, patInf3);
-                verificarCorrienteEnPatita(patSup4, patInf4);
-                verificarCorrienteEnPatita(patSup5, patInf5);
-                verificarCorrienteEnPatita(patSup6, patInf6);
-                verificarCorrienteEnPatita(patSup7, patInf7);
-                verificarCorrienteEnPatita(patSup8, patInf8);
+                //Vetificamos si switch recibe algun tipo de corriente 
+                verificarCorrienteEnPatitas();
             }
         };
         timer.start();
     }
+    
     @Override
     public void setColor(String color) {
         this.color = color;
     }
 
-    // Verificar si hay corriente en la patita superior y pasarla a la patita
-    // inferior
-    private void verificarCorrienteEnPatita(Rectangle patSup, Rectangle patInf) {
-        // int columna = 0;
-        GridPane[] gridPanes = { protoboard.getBusSuperior(), protoboard.getPistaSuperior(),
-                protoboard.getPistaInferior() };
+    //Verificar corriente de patitas
+    private void verificarCorrienteEnPatitas(){
+        //Reunimos las patitas que verifican la corriente
+        Rectangle[] patitas = {patSup1, patSup2, patSup3, patSup4, patSup5, patSup6, patSup7, patSup8};
+
+        GridPane[] gridPanes = {protoboard.getBusSuperior(), protoboard.getPistaSuperior(),protoboard.getPistaInferior() };
+
+        //Verifcamos en que patita se encuentra la corriente
+        
+        for (Rectangle patita : patitas) {
+
+            for (GridPane gridPane : gridPanes) {
+                for (Node node : gridPane.getChildren()) {
+                    Bounds patitaBounds = patita.localToScene(patita.getBoundsInLocal());
+                        Button button = (Button) node;
+                        Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
+                        if (patitaBounds.intersects(buttonBounds)) {
+                            if (button.getId().contains("positiva")) {
+                                patita.setFill(Color.GREEN);
+                            } else if (button.getId().contains("negativa")) {
+                                patita.setFill(Color.RED);
+                            } else {
+                                patita.setFill(Color.BLACK);
+                            }
+                        }
+                    
+                }
+            }
+        }
+    }
+
+
+    private void pasoCorriente(Rectangle patSup, Rectangle patInf, boolean puede){
+        Bounds patitaBounds = patInf.localToScene(patInf.getBoundsInLocal());
+
+        GridPane[] gridPanes = {protoboard.getBusSuperior(), protoboard.getPistaSuperior(),protoboard.getPistaInferior() };
 
         for (GridPane gridPane : gridPanes) {
             for (Node node : gridPane.getChildren()) {
-                // if (!(node instanceof Button)) continue;
-
                 Button button = (Button) node;
-                String carga = retornaUnValorDeID(button, 4);
-                Integer nodeCol = GridPane.getColumnIndex(node);
-
-                Bounds patSupBounds = patSup.localToScene(patSup.getBoundsInLocal());
                 Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
-
-                // Obtenemos carga de las patitas superiores
-                if (patSupBounds.intersects(buttonBounds)) {
-                    // Cambia el color según la carga detectada
-                    if (carga.equals("positiva")) {
-                        patSup.setFill(Color.GREEN);
-                        patInf.setFill(Color.GREEN);
-                    } else if (carga.equals("negativa")) {
-                        patSup.setFill(Color.RED);
-                        patInf.setFill(Color.RED);
-                    } else {
-                        patSup.setFill(Color.BLACK);
-                        patInf.setFill(Color.BLACK);
-                    }
+                Integer fila = GridPane.getRowIndex(node);
+                Integer columna = GridPane.getColumnIndex(node);
+                if (patitaBounds.intersects(buttonBounds)){
+                    daElPaso(gridPane, patSup, fila, columna, puede);
+                    return;
                 }
-
             }
         }
     }
 
-    // Manejamos el paso de corriente en las patitas
-    public void pasoCorriente(Rectangle patInf, boolean Corriente, String tipo) {
-        int col = 0, fila = 0;
-        GridPane gridPane = tipo.contains("pistaSuperior") ? protoboard.getPistaSuperior()
-                : (tipo.contains("pistaInferior") ? protoboard.getPistaInferior() : protoboard.getBusInferior());
-
+    private void daElPaso(GridPane gridPane, Rectangle patSup, Integer fila, Integer columna, boolean puede){
         for (Node node : gridPane.getChildren()) {
-            Integer nodeCol = GridPane.getColumnIndex(node);
+            int nodeCol = GridPane.getColumnIndex(node);
+            Integer nodRow = GridPane.getRowIndex(node);
             Button button = (Button) node;
-            Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
-            Bounds patInfBounds = patInf.localToScene(patInf.getBoundsInLocal());
-
-            if (patInfBounds.intersects(buttonBounds)) {
-                col = nodeCol;
-                fila = GridPane.getRowIndex(node);
-            }
-
-            if (tipo.contains("pista")) {
-                if (nodeCol.equals(col)) {
-                    if (Corriente) {
-                        if (patInf.getFill().equals(Color.GREEN)) {
-                            node.setStyle("-fx-background-color: green; -fx-background-radius: 30;");
+            if(gridPane.equals(protoboard.getPistaInferior()) || gridPane.equals(protoboard.getPistaSuperior())){
+                if(nodeCol == columna){
+                    if(puede){
+                        if(patSup.getFill().equals(Color.GREEN)){
+                            button.setStyle("-fx-background-color: green; -fx-background-radius: 30;");
                             cambiarParteIdBoton(button, 4, "positiva");
-                        } else if (patInf.getFill().equals(Color.RED)) {
-                            node.setStyle("-fx-background-color: red; -fx-background-radius: 30;");
+                        }else if(patSup.getFill().equals(Color.RED)){
+                            button.setStyle("-fx-background-color: red; -fx-background-radius: 30;");
                             cambiarParteIdBoton(button, 4, "negativa");
                         }
-                    } else if (!VariablesGlobales.corrienteBateria || !Corriente) {
-                        node.setStyle("-fx-background-radius: 30;");
+                    }else{
+                        button.setStyle("-fx-background-radius: 30;");
                         cambiarParteIdBoton(button, 4, "0");
                     }
                 }
-            } else if (tipo.contains("bus")) {
-                if (GridPane.getRowIndex(node).equals(fila)) {
-                    if (Corriente) {
-                        if (patInf.getFill().equals(Color.GREEN)) {
-                            node.setStyle("-fx-background-color: green; -fx-background-radius: 30;");
+            }else{
+                if(nodRow == fila){
+                    if(puede){
+                        if(patSup.getFill().equals(Color.GREEN)){
+                            button.setStyle("-fx-background-color: green; -fx-background-radius: 30;");
                             cambiarParteIdBoton(button, 4, "positiva");
-                        } else if (patInf.getFill().equals(Color.RED)) {
-                            node.setStyle("-fx-background-color: red; -fx-background-radius: 30;");
+                        }else if(patSup.getFill().equals(Color.RED)){
+                            button.setStyle("-fx-background-color: red; -fx-background-radius: 30;");
                             cambiarParteIdBoton(button, 4, "negativa");
                         }
-                    } else if (!VariablesGlobales.corrienteBateria || !Corriente) {
-                        node.setStyle("-fx-background-radius: 30;");
+                    }else{
+                        button.setStyle("-fx-background-radius: 30;");
                         cambiarParteIdBoton(button, 4, "0");
                     }
                 }
             }
-
         }
-
-    }
-
-    // Métodos auxiliares
-    public String retornaUnValorDeID(Button button, int parte) {
-        String id = button.getId();
-        String[] partes = id.split("-");
-        return partes[parte];
     }
 
     // Manejo del arrastre del switch
@@ -223,24 +203,6 @@ public class ControladorSwitch8x3 implements ControladorElemento{
     public void onMouseDragged(MouseEvent event) {
         paneSwitch8x3.setLayoutX(event.getSceneX() - offsetX);
         paneSwitch8x3.setLayoutY(event.getSceneY() - offsetY);
-    }
-
-    // nos indica en que pista o bus se encuentra la patita inferior
-    private String enQueGrindpane(Rectangle patInf) {
-        GridPane[] gridPanes = { protoboard.getPistaSuperior(), protoboard.getPistaInferior(),
-                protoboard.getBusInferior() };
-        for (GridPane gridPane : gridPanes) {
-            for (Node node : gridPane.getChildren()) {
-                Button button = (Button) node;
-                Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
-                Bounds patInfBounds = patInf.localToScene(patInf.getBoundsInLocal());
-                if (patInfBounds.intersects(buttonBounds)) {
-                    String tipo = retornaUnValorDeID(button, 1);
-                    return tipo;
-                }
-            }
-        }
-        return ""; // Return an empty string if no intersection is found
     }
 
     // Funcion que cambia una parte del id segun el index que se le pase
