@@ -38,8 +38,6 @@ public class Cables {
         }
     }
 
-
-
     public List<CableInfo> getCablesConectados() {
         return cablesConectados;
     }
@@ -77,6 +75,7 @@ public class Cables {
                 // Verifica si ya existe un cable entre los dos botones
                 CableInfo cableExistente = encontrarCable(buttonStart, buttonEnd);
                 if (cableExistente != null) {
+
                     // Si existe un cable, lo eliminamos y actualizamos cargas
                     eliminarCable(cableExistente, buttonStart, buttonEnd);
 
@@ -144,27 +143,81 @@ public class Cables {
 
     // Método para eliminar un cable
     private void eliminarCable(CableInfo cableInfo, Button startButton, Button endButton) {
-        pane.getChildren().remove(cableInfo.cable);
-        cablesConectados.remove(cableInfo);
+        boolean puedeEliminar = false;
+        for (CableInfo info : cablesConectados) {
+            if (info.startButton == startButton) {
+                puedeEliminar = true;
+            }else{
+                puedeEliminar = false;
+            }
+        }
 
-        // Cambiamos la Id de los botones a desconectar
-        cambiarParteIdBoton(endButton, 5, "desconectado");
-        cambiarParteIdBoton(startButton, 5, "desconectado");
+        //if(puedeEliminar){
+            pane.getChildren().remove(cableInfo.cable);
+            cablesConectados.remove(cableInfo);
 
-        // Cortamos la corriente transmitida
-        carga = "0";
-        estilo = "-fx-background-radius: 30;";
-        manejoCorriente(endButton);
+            // Cambiamos la Id de los botones a desconectar
+            cambiarParteIdBoton(startButton, 5, "desconectado");
+            cambiarParteIdBoton(endButton, 5, "desconectado");
+
+            carga = "0";
+            estilo = "-fx-background-radius: 30;";
+
+            //Verificamos si startButton recibe energia
+            if(!verificaStartButton(startButton)){
+                manejoCorriente(startButton);
+            }
+
+            // Cortamos la corriente transmitida al boton endButton
+            manejoCorriente(endButton);
+
+            // Reiniciar las variables temporales para otro uso
+            buttonStart = null;
+            buttonEnd = null;
+            estilo = "";
+            carga = "";
+
+            // actualizar la corriente
+            actualizarCorrienteTodos();
+            // actualizarGridpanes();
+        //}else{
+            //mostrarVentanaMensaje("Para eliminar un cable, seleccione el primer botón del cable.");
+        //}
 
         // Reiniciar las variables temporales para otro uso
         buttonStart = null;
         buttonEnd = null;
         estilo = "";
         carga = "";
+        
+    }
 
-        // actualizar la corriente
-        actualizarCorrienteTodos();
-        // actualizarGridpanes();
+    //Se verifica si starButton esta conectado a otro boton
+    private boolean verificaStartButton(Button startButton){
+        int columna = Integer.parseInt(retornaUnValorDeID(startButton, 3));
+        int fila = Integer.parseInt(retornaUnValorDeID(startButton, 2));
+        String tipo = retornaUnValorDeID(startButton, 1);
+
+        if (tipo.contains("busSuperior") || tipo.contains("busInferior")) {
+            GridPane gridPane = tipo.contains("busSuperior") ? busSuperior : busInferior;
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeRow = GridPane.getRowIndex(node);
+                String conectadoRow = retornaUnValorDeID((Button) node, 5); // Obtenemos si un boton esta conectado
+                if (nodeRow.equals(fila) && conectadoRow.equals("conectado")) {
+                    return true;
+                }
+            }
+        } else {
+            GridPane gridPane = tipo.contains("pistaSuperior") ? pistaSuperior : pistaInferior;
+            for (Node node : gridPane.getChildren()) {
+                Integer nodeCol = GridPane.getColumnIndex(node);
+                String conectadoCol = retornaUnValorDeID((Button) node, 5); // Obtenemos si un boton esta conectado
+                if (nodeCol.equals(columna) && conectadoCol.equals("conectado")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     // Método para encontrar un cable entre dos botones
@@ -298,14 +351,17 @@ public class Cables {
 
     // Método para encontrar el otro extremo de un cable conectado a un botón
     private Button encontrarOtroExtremo(Button button) {
+        Button boton = new Button();
+        boton.setId("NULL");
         for (CableInfo cableInfo : cablesConectados) {
             if (cableInfo.startButton == button) {
                 return cableInfo.endButton;
-            } else if (cableInfo.endButton == button) {
+            }else if(cableInfo.endButton == button){
                 return cableInfo.startButton;
             }
+
         }
-        return null; // Retorna null si no se encuentra ningún cable conectado
+        return button; // Retorna null si no se encuentra ningún cable conectado
     }
 
     // funcion para actualizar el paso de corriente
@@ -335,16 +391,18 @@ public class Cables {
                     Button otroExtremo = encontrarOtroExtremo(button);
                     String tipoOtroExtremo = retornaUnValorDeID(otroExtremo, 1);
                     if (otroExtremo != null) {
-                        // GridPane tipo = tipoOtroExtremo.contains("busSuperior") ? busSuperior:
-                        // tipoOtroExtremo.contains("busInferior") ? busInferior:
-                        // tipoOtroExtremo.contains("pistaSuperior") ? pistaSuperior : pistaInferior;
                         manejoCorriente(otroExtremo);
                     }
 
-                    // inicializar datos
-                    carga = "0";
-                    estilo = "";
-                }
+                    
+                }//else if(conexion.equals("desconectado")){
+                    //estilo = "-fx-background-radius: 30;";
+                    //manejoCorriente(button);
+                //}
+
+                // inicializar datos
+                carga = "0";
+                estilo = "";
 
             }
         }
@@ -436,8 +494,8 @@ public class Cables {
             }
         }
     }
-    // Método para conectar dos protoboards
 
+    // Método para conectar dos protoboards
     public void conectar(int protoboardIdStart, Button startButton, int protoboardIdEnd, Button endButton) {
         // Crear una línea que represente el cable
         Line cable = new Line();
@@ -459,6 +517,15 @@ public class Cables {
         alert.setTitle("Conexión Exitosa");
         alert.setHeaderText(null);
         alert.setContentText("Se ha conectado la protoboard " + protoboardIdStart + " con la protoboard " + protoboardIdEnd);
+        alert.showAndWait();
+    }
+
+    // Método para mostrar una ventana de mensaje
+    private void mostrarVentanaMensaje(String message, String title) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 }
