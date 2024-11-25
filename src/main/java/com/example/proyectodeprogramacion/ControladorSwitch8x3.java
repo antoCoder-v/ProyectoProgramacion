@@ -37,10 +37,9 @@ public class ControladorSwitch8x3 implements ControladorElemento{
         // Inicializamos las variables
         protoboard = VariablesGlobales.controladorProtoboard;
         cables = VariablesGlobales.cables;
-        EliminarElementos.habilitarEliminacion(paneSwitch8x3, this);
 
-        // Habilitamos la eliminación del switch
-        // EliminarElementos.habilitarEliminacion(paneSwitch8x3);
+        //habilitamos la eliminación del switch
+        EliminarElementos.habilitarEliminacion(paneSwitch8x3, this);
 
         // Configuramos los eventos para el arrastre del switch
         paneSwitch8x3.setOnMousePressed(this::onMousePressed);
