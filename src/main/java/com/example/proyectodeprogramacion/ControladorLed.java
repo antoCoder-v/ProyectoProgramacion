@@ -73,7 +73,7 @@ public class ControladorLed implements ControladorElemento {
                 // Variable para habilitar opciones
                 estaEncimaDeProtoboard();
                 verificarCorrienteLED();
-                
+
             }
         };
         timer.start();
@@ -99,7 +99,6 @@ public class ControladorLed implements ControladorElemento {
 
         colorMenu.getItems().addAll(morado, celeste, rosado, naranjo);
         colorMenu.show(ledPane, ledPane.getLayoutX(), ledPane.getLayoutY());
-        //return colorMenu;
     }
 
 
@@ -153,25 +152,22 @@ public class ControladorLed implements ControladorElemento {
     }
 
     // Método para verificar si el LED está correctamente colocado y recibiendo
-    // corriente
-        public void verificarCorrienteLED() {
-            // Verficamos si recibe la corriente correcta las patitas
-            if (patita1.getFill().equals(Color.RED) && patita2.getFill().equals(Color.GREEN)) {
-                cambiarColor("yellow"); // Cambia a amarillo si la conexión es correcta
-            } else if (patita2.getFill().equals(Color.RED) && patita1.getFill().equals(Color.GREEN) && !ledExploto) {
-                cambiarColor("black");
-                AudioClip explosionSound = new AudioClip(getClass().getResource("/Audio/explosion.wav").toExternalForm());
-                explosionSound.play();
-                ledExploto = true; // Evitar múltiples explosiones
-            } else if (!ledExploto) {
-                luzCirculo.setFill(Color.web(colorUsuario)); // Restaura el color seleccionado por el usuario
-                luzRectangulo.setFill(Color.web(colorUsuario));
-            }
+    public void verificarCorrienteLED() {
+        // Verficamos si recibe la corriente correcta las patitas
+        if (patita1.getFill().equals(Color.RED) && patita2.getFill().equals(Color.GREEN)) {
+            cambiarColor("yellow");
+        } else if (patita2.getFill().equals(Color.RED) && patita1.getFill().equals(Color.GREEN) && !ledExploto) {
+            cambiarColor("black");
+            AudioClip explosionSound = new AudioClip(getClass().getResource("/Audio/explosion.wav").toExternalForm());
+            explosionSound.play();
+            //mostrarVentanaMensaje("EL LED SE HA QUEMADO", "ERROR DE EXPLOSION");
+            ledExploto = true;
+        } else if(!ledExploto){
+            cambiarColor("red");
         }
+    }
 
-
-    // funcion que nos indica si las patitas del led coinciden con los botones de la
-    // protoboard y si estan recibiendo corriente
+    // Método para verificar si las patitas están sobre los botones de la protoboard
     private Boolean verificarPatitasEnGridPane(GridPane gridPane, Circle patitas, String patita) {
         // Obtener la posición de las patitas del LED
         Bounds patitaBounds = patitas.localToScene(patitas.getBoundsInLocal());
@@ -180,37 +176,40 @@ public class ControladorLed implements ControladorElemento {
             if (node instanceof Button) {
                 Button button = (Button) node;
 
-                // variables para guardarpartes de la id
+                // Obtener la ID y los valores asociados
                 String buttonId = button.getId();
-                String carga = ""; // obtenemos carga del boton
-                String[] parts = buttonId.split("-"); // se separa en partes la id
-                carga = parts[4].trim(); // obtenemos solo carga del boton
+                String carga = "";
+                String[] parts = buttonId.split("-");
+                if (parts.length > 4) {
+                    carga = parts[4].trim();
+                }
 
                 // Obtener los límites del botón
                 Bounds buttonBounds = button.localToScene(button.getBoundsInLocal());
 
-                // Verificar si la patita está sobre algun botón
+                // Verificar si la patita está sobre algún botón
                 if (patitaBounds.intersects(buttonBounds)) {
-                    if (carga.equals("positiva")) { // si la carga es positiva
-                        patitas.setFill(Color.GREEN);
-                    } else if (carga.equals("negativa")) { // si la carga es negativa
-                        patitas.setFill(Color.RED);
-                    } else if (carga.equals("0")) {
-                        patitas.setFill(Color.BLUE);
+                    switch (carga) {
+                        case "positiva":
+                            patitas.setFill(Color.GREEN);
+                            break;
+                        case "negativa":
+                            patitas.setFill(Color.RED);
+                            break;
+                        case "0":
+                            patitas.setFill(Color.BLUE);
+                            break;
+                        default:
+                            patitas.setFill(Color.DODGERBLUE);
+                            break;
                     }
                     return true;
                 }
             }
         }
+        // Si no está sobre ningún botón, se restaura a su color original
+        patitas.setFill(Color.DODGERBLUE);
         return false;
     }
 
-    // Método para mostrar una ventana de mensaje
-    private void mostrarVentanaMensaje(String message, String title) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }
